@@ -6,10 +6,7 @@ import com.project.DuAnTotNghiep.entity.Color;
 import com.project.DuAnTotNghiep.entity.Size;
 import com.project.DuAnTotNghiep.exception.NotFoundException;
 import com.project.DuAnTotNghiep.service.SizeService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,7 +29,7 @@ public class SizeRestController {
     }
 
     @PostMapping("/api/size")
-    public SizeDto createSizeApi(SizeDto sizeDto) {
+    public SizeDto createSizeApi(@RequestBody SizeDto sizeDto) {
         return sizeService.createSizeApi(sizeDto);
     }
 }

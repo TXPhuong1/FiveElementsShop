@@ -37,7 +37,7 @@ public class ShoppingCartController {
     @GetMapping("/shoping-cart")
     public String viewShoppingCart(Model model) {
         List<CartDto> cartDtoList = cartService.getAllCartByAccountId();
-        Page<DiscountCodeDto> discountCodeList = discountCodeService.getAllAvailableDiscountCode(PageRequest.of(0, 20));
+        Page<DiscountCodeDto> discountCodeList = discountCodeService.getAllAvailableDiscountCode(PageRequest.of(0, 15));
         List<AddressShippingDto> addressShippingDtos = addressShippingService.getAddressShippingByAccountId();
         model.addAttribute("discountCodes", discountCodeList.getContent());
         model.addAttribute("addressShippings", addressShippingDtos);

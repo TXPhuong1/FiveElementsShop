@@ -1,20 +1,20 @@
 package com.project.DuAnTotNghiep.dto.Bill;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.project.DuAnTotNghiep.dto.CustomerDto.CustomerDto;
+import com.project.DuAnTotNghiep.entity.enumClass.BillStatus;
+import lombok.*;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+import java.time.LocalDateTime;
+
+@Data
 public class BillDto {
-    private Long maHoaDon;
-    private String hoVaTen;
-    private String soDienThoai;
-    private Double tongTien;
-    private int trangThai;
-    private int loaiDon;
-    private String hinhThucThanhToan;
+    private Long id;
+    private String code;
+    private double promotionPrice;
+    private LocalDateTime createDate;
+    private LocalDateTime updateDate;
+    private BillStatus status;
+    private Boolean returnStatus;
+    private CustomerDto customer;
+    private Double totalAmount;
 }

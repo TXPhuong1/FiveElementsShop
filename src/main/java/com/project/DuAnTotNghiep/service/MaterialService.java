@@ -14,10 +14,12 @@ public interface MaterialService {
 
     Material save(Material material);
 
+    Material createMaterial(Material material);
+    Material updateMaterial(Material material);
+
     void delete(Long id);
 
     Optional<Material> findById(Long id);
-
     List<Material> getAll();
 
     MaterialDto createMaterialApi(MaterialDto materialDto);

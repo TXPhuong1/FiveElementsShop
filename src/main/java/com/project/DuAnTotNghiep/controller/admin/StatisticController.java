@@ -7,6 +7,7 @@ import com.project.DuAnTotNghiep.dto.Statistic.UserStatistic;
 import com.project.DuAnTotNghiep.repository.BillRepository;
 import com.project.DuAnTotNghiep.service.AccountService;
 import com.project.DuAnTotNghiep.service.StatisticService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -101,9 +102,18 @@ public class StatisticController {
     }
 
     private double calculatePercentage(double baseValue, double comparedValue) {
-        if (baseValue == 0) {
-            return 99; // Tránh chia cho 0
+//        if(comparedValue == 0) {
+//            return 0;
+//        }
+
+        if(baseValue == 0 && comparedValue > 0) {
+            return 99;
         }
+
+        if (baseValue == 0) {
+            return 0; // Tránh chia cho 0
+        }
+
         return ((comparedValue - baseValue) / baseValue) * 100;
     }
 }

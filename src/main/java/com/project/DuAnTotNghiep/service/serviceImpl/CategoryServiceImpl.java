@@ -31,6 +31,7 @@ public class CategoryServiceImpl implements CategoryService {
         if(categoryRepository.existsByCode(category.getCode())) {
             throw new ShopApiException(HttpStatus.BAD_REQUEST, "Mã loại " + category.getCode() + " đã tồn tại");
         }
+        category.setDeleteFlag(false);
         return categoryRepository.save(category);
     }
 
@@ -42,12 +43,15 @@ public class CategoryServiceImpl implements CategoryService {
                 throw new ShopApiException(HttpStatus.BAD_REQUEST, "Mã loại " + category.getCode() + " đã tồn tại");
             }
         }
+        category.setDeleteFlag(false);
         return categoryRepository.save(category);
     }
 
     @Override
     public void delete(Long id) {
-        categoryRepository.deleteById(id);
+        Category category = categoryRepository.findById(id).orElseThrow(null);
+        category.setDeleteFlag(true);
+        categoryRepository.save(category);
     }
 
     @Override
@@ -70,7 +74,7 @@ public class CategoryServiceImpl implements CategoryService {
         if(categoryRepository.existsByCode(categoryDto.getCode())) {
             throw new ShopApiException(HttpStatus.BAD_REQUEST, "Mã loại đã tồn tại");
         }
-        Category category = new Category(null, categoryDto.getCode(), categoryDto.getName(), 1);
+        Category category = new Category(null, categoryDto.getCode(), categoryDto.getName(), 1, false);
         Category categoryNew = categoryRepository.save(category);
         return new CategoryDto(category.getId(), category.getCode(), category.getName());
     }

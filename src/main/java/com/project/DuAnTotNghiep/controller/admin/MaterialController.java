@@ -2,6 +2,7 @@ package com.project.DuAnTotNghiep.controller.admin;
 
 import com.project.DuAnTotNghiep.entity.Brand;
 import com.project.DuAnTotNghiep.entity.Material;
+import com.project.DuAnTotNghiep.exception.NotFoundException;
 import com.project.DuAnTotNghiep.service.BrandService;
 import com.project.DuAnTotNghiep.service.MaterialService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
 
@@ -25,7 +27,7 @@ public class MaterialController {
     private MaterialService materialService;
 
     @GetMapping("/material-all")
-    public String getAllBrand(Model model, @RequestParam(name = "page", defaultValue = "0") int page,
+    public String getAllMaterial(Model model, @RequestParam(name = "page", defaultValue = "0") int page,
                               @RequestParam(name = "sort", defaultValue = "name,asc") String sortField) {
         int pageSize = 5; // Number of items per page
         String[] sortParams = sortField.split(",");
@@ -50,7 +52,7 @@ public class MaterialController {
     }
 
     @GetMapping("/material-create")
-    public String viewAddBrand(Model model){
+    public String viewAddMaterial(Model model){
         Material material = new Material();
         model.addAttribute("action", "/admin/material-save");
         model.addAttribute("Material", material);
@@ -59,24 +61,34 @@ public class MaterialController {
 
 
     @PostMapping("/material-save")
-    public String addBrand(Model model, @Validated @ModelAttribute("Material") Material material) {
-        materialService.save(material);
+    public String addMaterial(Model model, @Validated @ModelAttribute("Material") Material material, RedirectAttributes redirectAttributes) {
+        try {
+            materialService.createMaterial(material);
+            redirectAttributes.addFlashAttribute("successMessage", "Thêm chất liệu mới thành công");
+
+        }
+        catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/admin/material-create";
+        }
         return "redirect:/admin/material-all";
     }
 
     @PostMapping("/material-update/{id}")
     public String update(@PathVariable("id") Long id,
-                         @Validated @ModelAttribute("Brand") Brand brand) {
-        Optional<Material> optional = materialService.findById(id);
-        if (optional.isPresent()) {
-            Material updateMaterial = optional.get();
-            updateMaterial.setName(brand.getName());
-            updateMaterial.setCode(brand.getCode());
-            materialService.save(updateMaterial);
-            return "redirect:/admin/material-all";
-        } else {
-            return null;
-        }
+                         @Validated @ModelAttribute("Material") Material material, RedirectAttributes redirectAttributes) {
+
+            try {
+                Material material1 = materialService.updateMaterial(material);
+                redirectAttributes.addFlashAttribute("successMessage", "Chất liệu " + material1.getCode()  + " đã được cập nhật thành công");
+            }catch (NotFoundException e) {
+                return "404";
+            }
+            catch (Exception e) {
+                redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+                return "redirect:/admin/material-detail/" + id;
+            }
+        return "redirect:/admin/material-all";
     }
 
     @GetMapping("/material-detail/{id}")
@@ -88,7 +100,7 @@ public class MaterialController {
             model.addAttribute("action", "/admin/material-update/" + material.getId());
             return "admin/material-create";
         } else {
-            return null;
+            return "404";
         }
     }
 

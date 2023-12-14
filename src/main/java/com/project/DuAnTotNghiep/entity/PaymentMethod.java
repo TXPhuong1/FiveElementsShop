@@ -1,5 +1,6 @@
 package com.project.DuAnTotNghiep.entity;
 
+import com.project.DuAnTotNghiep.entity.enumClass.PaymentMethodName;
 import lombok.*;
 import org.hibernate.annotations.Nationalized;
 
@@ -13,7 +14,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class PaymentMethod implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Nationalized

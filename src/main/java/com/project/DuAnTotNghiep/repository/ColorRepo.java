@@ -3,6 +3,8 @@ package com.project.DuAnTotNghiep.repository;
 import com.project.DuAnTotNghiep.entity.Color;
 import com.project.DuAnTotNghiep.entity.Product;
 import com.project.DuAnTotNghiep.entity.Size;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -18,4 +20,7 @@ public interface ColorRepo extends JpaRepository<Color,Long> {
     List<Color> findColorsByProductAndSize(Product product, Size size);
 
     boolean existsByCode(String code);
+
+    List<Color> findAllByDeleteFlagFalse();
+    Page<Color> findAllByDeleteFlagFalse(Pageable pageable);
 }

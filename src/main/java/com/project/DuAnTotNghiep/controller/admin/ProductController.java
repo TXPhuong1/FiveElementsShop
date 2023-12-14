@@ -145,7 +145,7 @@ public class ProductController {
 
     @PostMapping("/product-save")
     @Transactional(rollbackOn = Exception.class)
-    public String handlePart2(@ModelAttribute("form") CreateProductDetailsForm form, HttpSession session, @RequestParam("files") List<MultipartFile> files) throws IOException {
+    public String handlePart2(@ModelAttribute("form") CreateProductDetailsForm form, HttpSession session, @RequestParam("files") List<MultipartFile> files, RedirectAttributes redirectAttributes) throws IOException {
         // Kiểm tra xem dữ liệu từ phần 1 đã tồn tại trong session hay chưa
         String randomCreateKey = (String) session.getAttribute("randomCreateKey");
         Product part1Data = (Product) session.getAttribute("createProductPart1" + randomCreateKey);
@@ -172,6 +172,8 @@ public class ProductController {
 
         session.removeAttribute("randomCreateKey");
         session.removeAttribute("createProductPart1" + randomCreateKey);
+
+        redirectAttributes.addFlashAttribute("successMessage", "Thêm sản phẩm " + part1Data.getCode() + " thành công");
         return "redirect:/admin/product-all"; // Trả về trang thành công
     }
 
@@ -206,7 +208,7 @@ public class ProductController {
             return "redirect:/admin/product-all";
         }
 
-        Product product = productService.getProductByCode(part1Data.getCode());
+        Product product = productService.getProductById(part1Data.getId()).orElseThrow(null);
         List<ProductDetail> productDetails = product.getProductDetails();
 
         CreateProductDetailsForm createProductDetailsForm = new CreateProductDetailsForm();
@@ -218,7 +220,10 @@ public class ProductController {
 
     @PostMapping("/product-save-edit")
     @Transactional(rollbackOn = Exception.class)
-    public String handleSaveEditPart2(@ModelAttribute("form") CreateProductDetailsForm form, HttpSession session, @RequestParam(value = "imageRemoveIds", required = false) List<Long> imageRemoveIds, @RequestParam(value = "files", required = false) List<MultipartFile> files) throws IOException {
+    public String handleSaveEditPart2(@ModelAttribute("form") CreateProductDetailsForm form, HttpSession session,
+                                      @RequestParam(value = "imageRemoveIds", required = false) List<Long> imageRemoveIds,
+                                      @RequestParam(value = "files", required = false) List<MultipartFile> files,
+                                      RedirectAttributes redirectAttributes) throws IOException {
         String randomUpdateKey = (String) session.getAttribute("randomUpdateKey");
 
         Product part1Data = (Product) session.getAttribute("editProductPart1" + randomUpdateKey);
@@ -258,6 +263,7 @@ public class ProductController {
 
         session.removeAttribute("randomUpdateKey");
         session.removeAttribute("editProductPart1" + randomUpdateKey);
+        redirectAttributes.addFlashAttribute("successMessage", "Sản phẩm được chỉnh sửa thành công");
         return "redirect:/admin/product-all"; // Trả về trang thành công
     }
 
@@ -289,8 +295,14 @@ public class ProductController {
     }
 
     @GetMapping("/product-delete/{id}")
-    public String delete(@PathVariable("id") Long id) throws NotFoundException {
-        productService.delete(id);
+    public String delete(@PathVariable("id") Long id, RedirectAttributes redirectAttributes, Model model) {
+        try{
+            Product product = productService.delete(id);
+            model.addAttribute("successMessage", "Sản phẩm có mã " + product.getCode() + " đã xóa thành công");
+        }catch (Exception e) {
+            model.addAttribute("errorMessage", e.getMessage());
+        }
+
         return "redirect:/admin/product-all";
     }
 

@@ -6,10 +6,12 @@ import com.project.DuAnTotNghiep.entity.Account;
 import com.project.DuAnTotNghiep.entity.AddressShipping;
 import com.project.DuAnTotNghiep.entity.Customer;
 import com.project.DuAnTotNghiep.exception.NotFoundException;
+import com.project.DuAnTotNghiep.exception.ShopApiException;
 import com.project.DuAnTotNghiep.repository.AddressShippingRepository;
 import com.project.DuAnTotNghiep.repository.CustomerRepository;
 import com.project.DuAnTotNghiep.security.CustomUserDetails;
 import com.project.DuAnTotNghiep.service.AddressShippingService;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -43,6 +45,10 @@ public class AddressShippingServiceImpl implements AddressShippingService {
 
     @Override
     public AddressShippingDto saveAddressShippingUser(AddressShippingDto addressShippingDto) {
+        List<AddressShipping> addressShippings = addressShippingRepository.findAllByCustomer_Account_Id(getCurrentLogin().getId());
+        if(addressShippings.size() > 5) {
+            throw new ShopApiException(HttpStatus.BAD_REQUEST, "Bạn chỉ được thêm tối đa 5 địa chỉ");
+        }
         AddressShipping addressShipping = new AddressShipping();
         addressShipping.setAddress(addressShippingDto.getAddress());
         Customer customer = new Customer();
@@ -64,6 +70,12 @@ public class AddressShippingServiceImpl implements AddressShippingService {
 
         AddressShipping addressShippingNew = addressShippingRepository.save(addressShipping);
         return new AddressShippingDto(addressShippingNew.getId(), addressShippingNew.getAddress());
+    }
+
+    @Override
+    public void deleteAddressShipping(Long id) {
+        AddressShipping addressShipping = addressShippingRepository.findById(id).orElseThrow(null);
+        addressShippingRepository.delete(addressShipping);
     }
 
     private Account getCurrentLogin() {

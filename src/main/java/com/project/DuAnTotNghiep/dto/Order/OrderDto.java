@@ -21,5 +21,6 @@ public class OrderDto {
     private String billingAddress;
     private double promotionPrice;
     private Long voucherId;
+    private String orderId;
     private List<OrderDetailDto> orderDetailDtos;
 }

@@ -34,12 +34,13 @@ public class ColorServiceIpml implements ColorService {
 
     @Override
     public Color updateColor(Color color) {
-        Color existingColor = colorRepo.findById(color.getId()).orElseThrow(null);
+        Color existingColor = colorRepo.findById(color.getId()).orElseThrow(() -> new NotFoundException("Không tìm thấy màu có mã " + color.getCode()) );
         if(!existingColor.getCode().equals(color.getCode())) {
             if(colorRepo.existsByCode(color.getCode())) {
                 throw new ShopApiException(HttpStatus.BAD_REQUEST, "Mã màu " + color.getCode() + " đã tồn tại");
             }
         }
+        color.setDeleteFlag(false);
         return colorRepo.save(color);
     }
 
@@ -48,12 +49,15 @@ public class ColorServiceIpml implements ColorService {
         if(colorRepo.existsByCode(color.getCode())) {
             throw new ShopApiException(HttpStatus.BAD_REQUEST, "Mã màu " + color.getCode() + " đã tồn tại");
         }
+        color.setDeleteFlag(false);
         return colorRepo.save(color);
     }
 
     @Override
     public void delete(Long id) {
-        colorRepo.deleteById(id);
+        Color existingColor = colorRepo.findById(id).orElseThrow(() -> new NotFoundException("Không tìm thấy màu có id " + id) );
+        existingColor.setDeleteFlag(true);
+        colorRepo.save(existingColor);
     }
 
     @Override
@@ -101,8 +105,8 @@ public class ColorServiceIpml implements ColorService {
             throw new ShopApiException(HttpStatus.BAD_REQUEST, "Mã màu đã tồn tại");
         }
 
-        Color color = new Color(null, colorDto.getCode(), colorDto.getName());
+        Color color = new Color(null, colorDto.getCode(), colorDto.getName(), false);
         Color colorNew = colorRepo.save(color);
-        return new ColorDto(color.getId(), colorNew.getCode(), colorNew.getName());
+        return new ColorDto(colorNew.getId(), colorNew.getCode(), colorNew.getName());
     }
 }

@@ -3,6 +3,8 @@ package com.project.DuAnTotNghiep.dto.Bill;
 import com.project.DuAnTotNghiep.entity.enumClass.BillStatus;
 import com.project.DuAnTotNghiep.entity.enumClass.InvoiceType;
 
+import java.time.LocalDateTime;
+
 public interface BillDetailDtoInterface {
     String getMaDonHang();
 
@@ -11,7 +13,7 @@ public interface BillDetailDtoInterface {
 
     Double getTongTien();
 
-    Double getTienSauKhuyenMai();
+    Double getTienKhuyenMai();
 
     String getTenKhachHang();
 
@@ -23,7 +25,11 @@ public interface BillDetailDtoInterface {
 
     String getPhuongThucThanhToan();
 
+    String getMaGiaoDich();
+
     InvoiceType getLoaiHoaDon();
 
+    String getVoucherName();
 
+    LocalDateTime getCreatedDate();
 }

@@ -36,6 +36,8 @@ public class BrandServiceImpl implements BrandService {
         if(brandRepository.existsByCode(brand.getCode().trim())) {
             throw new ShopApiException(HttpStatus.BAD_REQUEST, "Mã nhãn hàng đã tồn tại");
         }
+        brand.setStatus(1);
+        brand.setDeleteFlag(false);
         return save(brand);
     }
 
@@ -50,6 +52,7 @@ public class BrandServiceImpl implements BrandService {
                 throw new ShopApiException(HttpStatus.BAD_REQUEST, "Mã nhãn hàng " + brand.getCode() + " đã tồn tại");
             }
         }
+        brand.setDeleteFlag(false);
         return save(brand);
     }
 
@@ -61,7 +64,9 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     public void delete(Long id) {
-        brandRepository.deleteById(id);
+        Brand brand = brandRepository.findById(id).orElseThrow(null);
+        brand.setDeleteFlag(true);
+        brandRepository.save(brand);
     }
 
     @Override
@@ -80,6 +85,8 @@ public class BrandServiceImpl implements BrandService {
             throw new ShopApiException(HttpStatus.BAD_REQUEST, "Mã nhãn hàng đã tồn tại");
         }
         Brand brand = convertToEntity(brandDto);
+        brand.setStatus(1);
+        brand.setDeleteFlag(false);
         Brand brandNew = brandRepository.save(brand);
         return convertToDto(brandNew);
     }

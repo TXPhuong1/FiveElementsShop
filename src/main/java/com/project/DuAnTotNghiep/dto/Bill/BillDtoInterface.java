@@ -11,10 +11,12 @@ public interface BillDtoInterface {
     String getMaDinhDanh();
     String getHoVaTen();
     String getSoDienThoai();
-
     LocalDateTime getNgayTao();
     Double getTongTien();
     BillStatus getTrangThai();
     InvoiceType getLoaiDon();
     String getHinhThucThanhToan();
+
+    String getMaGiaoDich();
+    String getMaDoiTra();
 }

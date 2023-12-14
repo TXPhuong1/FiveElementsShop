@@ -19,4 +19,5 @@ public class Category implements Serializable {
     @Nationalized
     private String name;
     private int status;
+    private Boolean deleteFlag;
 }

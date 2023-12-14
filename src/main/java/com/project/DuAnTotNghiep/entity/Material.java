@@ -5,12 +5,12 @@ import org.hibernate.annotations.Nationalized;
 
 import javax.persistence.*;
 import java.io.Serializable;
-
-@Entity
-@Table(name = "Material")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+
+@Entity
+@Table(name = "Material")
 public class Material implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,4 +20,5 @@ public class Material implements Serializable {
     @Nationalized
     private String name;
     private int status;
+    private Boolean deleteFlag;
 }

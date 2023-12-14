@@ -3,6 +3,8 @@ package com.project.DuAnTotNghiep.repository;
 import com.project.DuAnTotNghiep.entity.Color;
 import com.project.DuAnTotNghiep.entity.Product;
 import com.project.DuAnTotNghiep.entity.Size;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -16,4 +18,11 @@ public interface SizeRepository extends JpaRepository<Size, Long> {
     List<Size> findSizesByProductAndColor(Product product, Color color);
 
     boolean existsByCode(String code);
+
+    List<Size> findAllByDeleteFlagFalse();
+    Page<Size> findAllByDeleteFlagFalse(Pageable pageable);
+
+    boolean existsByCodeAndDeleteFlagFalse(String code);
+
+    Size findByCodeAndDeleteFlagTrue(String code);
 }

@@ -65,13 +65,13 @@ public class PaymentController {
                 if (checkAmount) {
                     if (checkOrderStatus) {
                         if ("00".equals(request.getParameter("vnp_TransactionStatus"))) {
-                            model.addAttribute("status", "GD Thành công");
+                            model.addAttribute("status", "Giao dịch thành công");
                             model.addAttribute("paymentSuccess", true);
+                            model.addAttribute("orderId", paymentResultDto.getTxnRef());
                             updatePaymentStatus(payment);
                         } else {
                             model.addAttribute("status", "GD Không thành công");
                             model.addAttribute("paymentSuccess", false);
-
                         }
                     }
                     else {
@@ -99,7 +99,6 @@ public class PaymentController {
 
     private void updatePaymentStatus(Payment payment) {
         payment.setOrderStatus("1");
-        payment.setStatusExchange(1);
         payment.setPaymentDate(LocalDateTime.now());
         paymentRepository.save(payment);
     }

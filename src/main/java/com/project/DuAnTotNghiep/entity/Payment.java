@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "payment")
@@ -20,4 +21,10 @@ public class Payment {
     private String orderId;
     private String amount;
     private String orderStatus;
+    private LocalDateTime paymentDate;
+    private Integer statusExchange;
+
+    @OneToOne
+    @JoinColumn(name = "bill_id")
+    private Bill bill;
 }

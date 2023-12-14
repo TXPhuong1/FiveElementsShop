@@ -21,7 +21,11 @@ public class BillDetail implements Serializable {
     @JoinColumn(name = "productDetailId")
     private ProductDetail productDetail;
 
+    private Double momentPrice;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billId")
     private Bill bill;
+
+    private Integer returnQuantity;
 }

@@ -19,4 +19,5 @@ public class Brand implements Serializable {
     @Nationalized
     private String name;
     private int status;
+    private Boolean deleteFlag;
 }

@@ -13,7 +13,7 @@ import com.project.DuAnTotNghiep.exception.NotFoundException;
 import com.project.DuAnTotNghiep.exception.ShopApiException;
 import com.project.DuAnTotNghiep.repository.*;
 import com.project.DuAnTotNghiep.service.CartService;
-import com.project.DuAnTotNghiep.utils.StringRandmon;
+import com.project.DuAnTotNghiep.utils.RandomUtils;
 import com.project.DuAnTotNghiep.utils.UserLoginUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -149,7 +149,7 @@ public class CartServiceImpl implements CartService {
         int quantityAdding = cartDto.getQuantity();
         int quantityRemaining = cart.getProductDetail().getQuantity();
         if(quantityAdding > quantityRemaining) {
-            throw new ShopApiException(HttpStatus.BAD_REQUEST, "Số lượng trong giỏ hàng phải nhỏ hơn số lượng còn: " + quantityRemaining);
+            throw new ShopApiException(HttpStatus.BAD_REQUEST, "Xin lỗi, số lượng sản phẩm này chỉ còn: " + quantityRemaining);
         }
         cart.setQuantity(cartDto.getQuantity());
         cartRepository.save(cart);
@@ -184,7 +184,11 @@ public class CartServiceImpl implements CartService {
             billDetail.setQuantity(item.getQuantity());
             ProductDetail productDetail = productDetailRepository.findById(item.getProductDetailId()).orElseThrow(() -> new NotFoundException("Product not found"));
             billDetail.setProductDetail(productDetail);
+            Product product = productRepository.findByProductDetail_Id(productDetail.getId());
+            if(product.getStatus() == 2) {
+                throw new ShopApiException(HttpStatus.BAD_REQUEST, "Sản phẩm " + productDetail.getProduct().getName() + "-" + productDetail.getSize().getName() +  "-" + productDetail.getColor().getName()  + " đã ngừng bán");
 
+            }
             if(productDetail.getQuantity() - item.getQuantity() < 0) {
                 throw new ShopApiException(HttpStatus.BAD_REQUEST, "Sản phẩm " + productDetail.getProduct().getName() + "-" + productDetail.getSize().getName() +  "-" + productDetail.getColor().getName()  + " chỉ còn lại " + productDetail.getQuantity());
             }
@@ -228,7 +232,14 @@ public class CartServiceImpl implements CartService {
             payment.setOrderStatus("1");
             payment.setBill(billNew);
             payment.setAmount(total.toString());
-            payment.setOrderId(StringRandmon.generateRandomOrderId(8));
+            payment.setOrderId(RandomUtils.generateRandomOrderId(8));
+            payment.setStatusExchange(0);
+            paymentRepository.save(payment);
+        }
+
+        if(paymentMethod.getName() == PaymentMethodName.CHUYEN_KHOAN) {
+            Payment payment = paymentRepository.findByOrderId(orderDto.getOrderId());
+            payment.setBill(billNew);
             payment.setStatusExchange(0);
             paymentRepository.save(payment);
         }
@@ -313,10 +324,10 @@ public class CartServiceImpl implements CartService {
         payment.setBill(billNew);
         payment.setAmount(total.toString());
         payment.setStatusExchange(0);
-        payment.setOrderId(StringRandmon.generateRandomOrderId(8));
+        payment.setOrderId(RandomUtils.generateRandomOrderId(8));
         paymentRepository.save(payment);
 
-        return new OrderDto(billNew.getId().toString(), orderDto.getCustomer(), billNew.getInvoiceType(), billNew.getStatus(), billNew.getPaymentMethod().getId(), billNew.getBillingAddress(), billNew.getPromotionPrice(), null, null);
+        return new OrderDto(billNew.getId().toString(), orderDto.getCustomer(), billNew.getInvoiceType(), billNew.getStatus(), billNew.getPaymentMethod().getId(), billNew.getBillingAddress(), billNew.getPromotionPrice(), null, null, null);
     }
 
     @Override

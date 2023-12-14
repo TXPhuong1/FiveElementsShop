@@ -4,10 +4,7 @@ import com.project.DuAnTotNghiep.dto.Color.ColorDto;
 import com.project.DuAnTotNghiep.entity.Color;
 import com.project.DuAnTotNghiep.exception.NotFoundException;
 import com.project.DuAnTotNghiep.service.ColorService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,7 +17,7 @@ public class ColorRestController {
     }
 
     @PostMapping("/api/color")
-    public ColorDto createColorApi(ColorDto colorDto) {
+    public ColorDto createColorApi(@RequestBody ColorDto colorDto) {
         return colorService.createColorApi(colorDto);
     }
 

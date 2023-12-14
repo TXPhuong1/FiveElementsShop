@@ -59,7 +59,7 @@ public class StatisticRestController {
 
     @GetMapping("/get-statistic-user-by-month")
     public List<UserStatistic> getStatisticUserByMonth() {
-        List<UserStatistic> userStatistics = accountService.getUserStatistics("2023-01-01", "2023-31-12");
+        List<UserStatistic> userStatistics = accountService.getUserStatistics("2023-01-01", "2023-12-31");
         return  userStatistics;
     }
 

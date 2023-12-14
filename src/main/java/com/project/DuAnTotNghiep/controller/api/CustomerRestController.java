@@ -23,17 +23,17 @@ public class CustomerRestController {
 
     @GetMapping("/api/customer/filter")
     public Page<CustomerDto> searchCustomers(@RequestParam String keyword,  Pageable pageable) {
-        return customerService.searchCustomer(keyword, pageable);
+        return customerService.searchCustomerAdmin(keyword, pageable);
     }
 
     @PostMapping("/customer/create")
     public CustomerDto createCustomerFormData(@ModelAttribute CustomerDto customerDto) {
-        return customerService.createCustomer(customerDto);
+        return customerService.createCustomerAdmin(customerDto);
     }
 
     @PostMapping("/api/customer")
     public CustomerDto createCustomer(@RequestBody CustomerDto customerDto) {
-        return customerService.createCustomer(customerDto);
+        return customerService.createCustomerAdmin(customerDto);
     }
 
 

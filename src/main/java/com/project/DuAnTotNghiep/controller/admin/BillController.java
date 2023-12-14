@@ -2,9 +2,8 @@ package com.project.DuAnTotNghiep.controller.admin;
 
 
 import com.lowagie.text.DocumentException;
-import com.project.DuAnTotNghiep.dto.Bill.BillDetailDtoInterface;
-import com.project.DuAnTotNghiep.dto.Bill.BillDetailProduct;
-import com.project.DuAnTotNghiep.dto.Bill.BillDtoInterface;
+import com.project.DuAnTotNghiep.dto.Bill.*;
+import com.project.DuAnTotNghiep.entity.Bill;
 import com.project.DuAnTotNghiep.entity.enumClass.BillStatus;
 import com.project.DuAnTotNghiep.entity.enumClass.InvoiceType;
 import com.project.DuAnTotNghiep.service.BillService;
@@ -27,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -51,10 +51,12 @@ public class BillController {
             @RequestParam(name = "soDienThoai", required = false) String soDienThoai,
             @RequestParam(name = "hoVaTen", required = false) String hoVaTen
     ) {
-        int pageSize = 5;
+        int pageSize = 8;
         String[] sortParams = sortField.split(",");
         String sortFieldName = sortParams[0];
         Sort.Direction sortDirection = Sort.Direction.ASC;
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         if (sortParams.length > 1 && sortParams[1].equalsIgnoreCase("desc")) {
             sortDirection = Sort.Direction.DESC;
@@ -64,18 +66,20 @@ public class BillController {
         Pageable pageable = PageRequest.of(page, pageSize, sort);
 
         Page<BillDtoInterface> Bill;
+        LocalDateTime convertedNgayTaoStart = null;
+        LocalDateTime convertedNgayTaoEnd = null;
         if (ngayTaoStart != null || ngayTaoEnd != null || maDinhDanh != null || trangThai != null || loaiDon != null || hoVaTen != null || soDienThoai != null) {
             // Convert Date to LocalDateTime
-            LocalDateTime convertedNgayTaoStart = null;
-            LocalDateTime convertedNgayTaoEnd = null;
+
             if(ngayTaoStart != null) {
                 convertedNgayTaoStart = ngayTaoStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-
+                model.addAttribute("ngayTaoStart", convertedNgayTaoStart.format(formatter));
             }
             if(ngayTaoEnd != null) {
                 convertedNgayTaoEnd = ngayTaoEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                model.addAttribute("ngayTaoEnd", convertedNgayTaoEnd.format(formatter));
             }
-            Bill = billService.searchListBill(maDinhDanh, convertedNgayTaoStart, convertedNgayTaoEnd, trangThai, loaiDon, soDienThoai, hoVaTen, pageable);
+            Bill = billService.searchListBill(maDinhDanh.trim(), convertedNgayTaoStart, convertedNgayTaoEnd, trangThai, loaiDon, soDienThoai.trim(), hoVaTen.trim(), pageable);
         } else {
             Bill = billService.findAll(pageable);
         }
@@ -84,9 +88,7 @@ public class BillController {
         model.addAttribute("sortDirection", sortDirection);
         model.addAttribute("items", Bill);
 
-        model.addAttribute("maHoaDon", maDinhDanh);
-        model.addAttribute("ngayTaoStart", ngayTaoStart);
-        model.addAttribute("ngayTaoEnd", ngayTaoEnd);
+        model.addAttribute("maDinhDanh", maDinhDanh);
         model.addAttribute("trangThai", trangThai);
         model.addAttribute("loaiDon", loaiDon);
         model.addAttribute("soDienThoai", soDienThoai);
@@ -100,33 +102,31 @@ public class BillController {
 
     @GetMapping("/update-bill-status/{billId}")
     public String updateBillStatus(Model model, @RequestParam(name = "page", defaultValue = "0") int page,
-                                   @RequestParam(name = "sort", defaultValue = "create_date,desc") String sortField, @PathVariable Long billId,
+                                   @RequestParam(name = "sort", defaultValue = "createDate,desc") String sortField, @PathVariable Long billId,
                                    @RequestParam String trangThaiDonHang, RedirectAttributes redirectAttributes) {
-        int pageSize = 5;
-        String[] sortParams = sortField.split(",");
-        String sortFieldName = sortParams[0];
-        Sort.Direction sortDirection = Sort.Direction.ASC;
-
-        if (sortParams.length > 1 && sortParams[1].equalsIgnoreCase("desc")) {
-            sortDirection = Sort.Direction.DESC;
-        }
-
-        Sort sort = Sort.by(sortDirection, sortFieldName);
-
-        Pageable pageable = PageRequest.of(page, pageSize, sort);
-        Page<BillDtoInterface> Bill = billService.findAll(pageable);
         try {
-            billService.updateStatus(trangThaiDonHang, billId);
-            redirectAttributes.addFlashAttribute("message", "Hóa đơn " + billId + " cập nhật trạng thái thành công!");
+            Bill bill = billService.updateStatus(trangThaiDonHang, billId);
+            redirectAttributes.addFlashAttribute("message", "Hóa đơn " + bill.getCode() + " cập nhật trạng thái thành công!");
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("message", "Error updating status");
         }
-        model.addAttribute("sortField", sortFieldName);
-        model.addAttribute("sortDirection", sortDirection);
-        model.addAttribute("items", Bill);
 
         return "redirect:/admin/bill-list";
+    }
+
+    @GetMapping("/update-bill-status2/{billId}")
+    public String updateBillStatus2(Model model, @PathVariable Long billId,
+                                   @RequestParam String trangThaiDonHang, RedirectAttributes redirectAttributes) {
+        try {
+            Bill bill = billService.updateStatus(trangThaiDonHang, billId);
+            redirectAttributes.addFlashAttribute("message", "Hóa đơn " + bill.getCode() + " cập nhật trạng thái thành công!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("message", "Error updating status");
+        }
+
+        return "redirect:/admin/getbill-detail/" + billId ;
     }
 
 
@@ -203,4 +203,22 @@ public class BillController {
         return new ResponseEntity<>(htmlContent, headers, HttpStatus.OK);
     }
 
+
+    @ResponseBody
+    @GetMapping("/api/product/{billId}/bill")
+    public ResponseEntity<List<BillDetailProduct>> getAllProductByBillId(@PathVariable Long billId) {
+        return ResponseEntity.ok(billService.getBillDetailProduct(billId));
+    }
+
+    @ResponseBody
+    @GetMapping("/api/bill/validToReturn")
+    public Page<BillDto> getAllValidBillToReturn(Pageable pageable) {
+        return billService.getAllValidBillToReturn(pageable);
+    }
+
+    @ResponseBody
+    @GetMapping("/api/bill/validToReturn/search")
+    public Page<BillDto> getAllValidBillToReturnSearch(SearchBillDto searchBillDto, Pageable pageable) {
+        return billService.searchBillJson(searchBillDto, pageable);
+    }
 }

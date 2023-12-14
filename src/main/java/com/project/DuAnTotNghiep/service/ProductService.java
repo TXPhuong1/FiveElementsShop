@@ -20,7 +20,7 @@ public interface ProductService {
 
     Product save(Product product) throws IOException;
 
-    void delete(Long id) throws NotFoundException;
+    Product delete(Long id);
 
 
     Product getProductByCode(String code);

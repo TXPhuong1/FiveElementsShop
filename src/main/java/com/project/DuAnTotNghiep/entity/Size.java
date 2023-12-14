@@ -18,4 +18,5 @@ public class Size implements Serializable {
     private String code;
     @Nationalized
     private String name;
+    private Boolean deleteFlag;
 }

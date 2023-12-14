@@ -62,6 +62,7 @@ public class ColorController {
     public String addColor(RedirectAttributes redirectAttributes, @Validated @ModelAttribute("Color") Color color) {
         try {
             colorService.createColor(color);
+            redirectAttributes.addFlashAttribute("successMessage", "Thêm màu mới thành công");
         }
         catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
@@ -75,7 +76,9 @@ public class ColorController {
                          @Validated @ModelAttribute("Color") Color color, RedirectAttributes redirectAttributes) {
         if (colorService.existsById(id)) {
             try {
-                colorService.updateColor(color);
+                Color color1 = colorService.updateColor(color);
+                redirectAttributes.addFlashAttribute("successMessage", "Mã màu " + color1.getCode() + " cập nhật thành công");
+
             }catch (Exception e) {
                 redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
                 return "redirect:/admin/edit-color/" + id;

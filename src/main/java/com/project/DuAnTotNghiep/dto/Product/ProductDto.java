@@ -20,6 +20,7 @@ public class ProductDto {
     private String categoryName;
     private String imageUrl;
     private Double priceMin;
+
     private List<ProductDetailDto> productDetailDtos;
     private LocalDateTime createDate;
     private LocalDateTime updatedDate;

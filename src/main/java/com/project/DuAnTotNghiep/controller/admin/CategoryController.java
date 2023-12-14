@@ -63,6 +63,8 @@ public class CategoryController {
     public String addCategory(Model model, @Validated @ModelAttribute("Category") Category category, RedirectAttributes redirectAttributes) {
         try {
             categoryService.createCategory(category);
+            redirectAttributes.addFlashAttribute("successMessage", "Thêm loại sản phẩm mới thành công");
+
         }catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/admin/category-create";
@@ -75,7 +77,9 @@ public class CategoryController {
                          @Validated @ModelAttribute("Category") Category category, RedirectAttributes redirectAttributes) {
         if (categoryService.existsById(id)) {
             try {
-                categoryService.updateCategory(category);
+                Category category1 = categoryService.updateCategory(category);
+                redirectAttributes.addFlashAttribute("successMessage", "Loại sản phẩm " + category1.getCode() + " được cập nhật thành công");
+
             }catch (Exception e) {
                 redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
                 return "redirect:/admin/category-detail/" + id;

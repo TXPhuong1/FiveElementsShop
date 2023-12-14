@@ -21,4 +21,5 @@ public class Color implements Serializable {
     @Nationalized
     private String name;
 
+    private Boolean deleteFlag;
 }

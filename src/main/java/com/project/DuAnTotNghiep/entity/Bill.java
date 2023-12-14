@@ -39,6 +39,8 @@ public class Bill implements Serializable {
 
     private Double amount;
 
+    private Boolean returnStatus;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "customerId")
     private Customer customer;
@@ -50,4 +52,7 @@ public class Bill implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bill")
     private List<BillDetail> billDetail;
 
+    @ManyToOne
+    @JoinColumn(name = "discount_code_id")
+    private DiscountCode discountCode;
 }

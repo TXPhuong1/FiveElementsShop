@@ -13,4 +13,6 @@ public interface AddressShippingService {
     AddressShippingDto saveAddressShippingUser(AddressShippingDto addressShippingDto);
 
     AddressShippingDto saveAddressShippingAdmin(AddressShippingDtoAdmin addressShippingDto);
+
+    void deleteAddressShipping(Long id);
 }

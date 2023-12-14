@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
 
@@ -59,23 +60,34 @@ public class SizeController {
 
 
     @PostMapping("/size-save")
-    public String addBrand(Model model, @Validated @ModelAttribute("Size") Size size) {
-        sizeService.save(size);
+    public String addSize(Model model, @Validated @ModelAttribute("Size") Size size, RedirectAttributes redirectAttributes) {
+        try {
+            Size sizeNew = sizeService.createSize(size);
+            redirectAttributes.addFlashAttribute("successMessage", "Thêm kích cỡ mới thành công");
+        }
+        catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/admin/size-create";
+        }
         return "redirect:/admin/size-all";
     }
 
     @PostMapping("/size-update/{id}")
     public String update(@PathVariable("id") Long id,
-                         @Validated @ModelAttribute("Brand") Size size) {
+                         @Validated @ModelAttribute("Brand") Size size, RedirectAttributes redirectAttributes) {
         Optional<Size> optional = sizeService.findById(id);
         if (optional.isPresent()) {
-            Size updateSize = optional.get();
-            updateSize.setName(size.getName());
-            updateSize.setCode(size.getCode());
-            sizeService.save(updateSize);
+            try {
+                sizeService.updateSize(size);
+                redirectAttributes.addFlashAttribute("successMessage", "Kích cỡ được cập nhật thành công");
+
+            }catch (Exception e) {
+                redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+                return "redirect:/admin/size-detail/" + id;
+            }
             return "redirect:/admin/size-all";
         } else {
-            return null;
+            return "404";
         }
     }
 
@@ -93,8 +105,9 @@ public class SizeController {
     }
 
     @GetMapping("/size-delete/{id}")
-    public String delete(@PathVariable("id") Long id, ModelMap modelMap){
+    public String delete(@PathVariable("id") Long id, Model model){
         sizeService.delete(id);
+        model.addAttribute("successMessage", "Xóa kích cỡ thành công");
         return "redirect:/admin/size-all";
     }
 }

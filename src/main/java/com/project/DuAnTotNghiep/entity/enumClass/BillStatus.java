@@ -1,10 +1,13 @@
 package com.project.DuAnTotNghiep.entity.enumClass;
 
 public enum BillStatus {
-    KHOI_TAO,
-    DANG_XU_LY,
-    DANG_GIAO_HANG,
+
     CHO_XAC_NHAN,
+    CHO_LAY_HANG,
+    CHO_GIAO_HANG,
+//    DANG_GIAO_HANG,
+
     HOAN_THANH,
-    HUY
+    HUY,
+    TRA_HANG
 }
