@@ -1,9 +1,7 @@
 package com.project.DuAnTotNghiep.service;
 
 import com.lowagie.text.DocumentException;
-import com.project.DuAnTotNghiep.dto.Bill.BillDetailDtoInterface;
-import com.project.DuAnTotNghiep.dto.Bill.BillDetailProduct;
-import com.project.DuAnTotNghiep.dto.Bill.BillDtoInterface;
+import com.project.DuAnTotNghiep.dto.Bill.*;
 import com.project.DuAnTotNghiep.entity.Bill;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,15 +15,7 @@ import java.util.List;
 public interface BillService {
 
     Page<BillDtoInterface> findAll(Pageable pageable);
-
-//    public Page<BillDtoInterface> searchListBill(String maDinhDanh,
-//                                                 Date ngayTaoStart,
-//                                                 Date ngayTaoEnd,
-//                                                 Integer trangThai,
-//                                                 Integer loaiDon,
-//                                                 String soDienThoai,
-//                                                 String hoVaTen,
-//                                                 Pageable pageable);
+    
 
     Page<BillDtoInterface> searchListBill(String maDinhDanh,
                                           LocalDateTime ngayTaoStart,
@@ -36,7 +26,7 @@ public interface BillService {
                                           String hoVaTen,
                                           Pageable pageable);
 
-    int updateStatus(String status, Long id);
+    Bill updateStatus(String status, Long id);
 
     BillDetailDtoInterface getBillDetail(Long maHoaDon);
 
@@ -54,4 +44,10 @@ public interface BillService {
     Page<Bill> getBillByAccount(Pageable pageable);
 
     void deleteById(Long id);
+
+//    List<BillDto> getAllValidBillToReturn();
+
+    Page<BillDto> searchBillJson(SearchBillDto searchBillDto, Pageable pageable);
+
+    Page<BillDto> getAllValidBillToReturn( Pageable pageable);
 }

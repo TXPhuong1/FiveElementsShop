@@ -2,14 +2,17 @@ package com.project.DuAnTotNghiep.service.serviceImpl;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.BaseFont;
-import com.project.DuAnTotNghiep.dto.Bill.BillDetailDtoInterface;
-import com.project.DuAnTotNghiep.dto.Bill.BillDetailProduct;
-import com.project.DuAnTotNghiep.dto.Bill.BillDtoInterface;
-import com.project.DuAnTotNghiep.entity.Account;
-import com.project.DuAnTotNghiep.entity.Bill;
+import com.project.DuAnTotNghiep.dto.Bill.*;
+import com.project.DuAnTotNghiep.dto.CustomerDto.CustomerDto;
+import com.project.DuAnTotNghiep.entity.*;
 import com.project.DuAnTotNghiep.entity.enumClass.BillStatus;
 import com.project.DuAnTotNghiep.entity.enumClass.InvoiceType;
+import com.project.DuAnTotNghiep.exception.NotFoundException;
 import com.project.DuAnTotNghiep.repository.BillRepository;
+import com.project.DuAnTotNghiep.repository.ProductDetailRepository;
+import com.project.DuAnTotNghiep.repository.ProductRepository;
+import com.project.DuAnTotNghiep.repository.Specification.BillSpecification;
+import com.project.DuAnTotNghiep.repository.Specification.ProductSpecification;
 import com.project.DuAnTotNghiep.service.BillService;
 import com.project.DuAnTotNghiep.utils.UserLoginUtil;
 import org.apache.poi.common.usermodel.HyperlinkType;
@@ -18,15 +21,17 @@ import org.apache.poi.xssf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.text.DateFormatter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 
@@ -35,6 +40,9 @@ public class BillServiceImpl implements BillService {
 
     @Autowired
     private BillRepository billRepository;
+
+    @Autowired
+    private ProductDetailRepository productDetailRepository;
 
     @Override
     public Page<BillDtoInterface> findAll(Pageable pageable) {
@@ -75,8 +83,23 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
-    public int updateStatus(String status, Long id) {
-        return billRepository.updateStatus(status,id);
+    public Bill updateStatus(String status, Long id) {
+
+        // Nếu hủy thì cộng lại số lượng tồn
+        if(status.equals("HUY")) {
+            List<BillDetailProduct> billDetailProducts = billRepository.getBillDetailProduct(id);
+            billDetailProducts.forEach(item -> {
+                ProductDetail productDetail = productDetailRepository.findById(item.getId()).orElseThrow(() -> new NotFoundException("Không tìm thấy thuộc tính " + item.getId()));
+                int quantityBefore = productDetail.getQuantity();
+                productDetail.setQuantity(quantityBefore + item.getSoLuong());
+                productDetailRepository.save(productDetail);
+            });
+        }
+
+        Bill bill = billRepository.findById(id).orElseThrow(() -> new NotFoundException("Không tìm thấy bill có mã" + id));
+        bill.setStatus(BillStatus.valueOf(status));
+        bill.setUpdateDate(LocalDateTime.now());
+        return billRepository.save(bill);
     }
 
     @Override
@@ -143,20 +166,17 @@ public class BillServiceImpl implements BillService {
             totalCell.setCellStyle(totalCellStyle);
             String trangThaiText = "";
             switch (bill.getTrangThai()) {
-                case KHOI_TAO:
-                    trangThaiText = "Khởi tạo";
+                case CHO_XAC_NHAN:
+                    trangThaiText = "Chờ xác nhận";
                     break;
-                case DANG_XU_LY:
+                case CHO_LAY_HANG:
                     trangThaiText = "Đang xử lý";
                     break;
-                case DANG_GIAO_HANG:
-                    trangThaiText = "Đang giao hàng";
+                case CHO_GIAO_HANG:
+                    trangThaiText = "Chờ giao hàng";
                     break;
                 case HOAN_THANH:
                     trangThaiText = "Hoàn thành";
-                    break;
-                case CHO_XAC_NHAN:
-                    trangThaiText = "Chờ xác nhận";
                     break;
                 case HUY:
                     trangThaiText = "Hủy";
@@ -237,10 +257,12 @@ public class BillServiceImpl implements BillService {
             customerPhone = "";
         }
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
         String htmlContent = "<html xmlns:th=\"http://www.thymeleaf.org\">\n" +
                 "<head>\n" +
                 "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"></meta>\n" +
-                "    <title>PDF Example</title>\n" +
+                "    <title>Hóa đơn bán hàng</title>\n" +
                 "</head>\n" +
                 "<body style=\"font-family: SVN-Times New Roman;\">\n" +
                 "<h1 style=\"text-align: center\">HÓA ĐƠN BÁN HÀNG</h1>\n" +
@@ -251,8 +273,9 @@ public class BillServiceImpl implements BillService {
                 "<h5> Số điện thoại :" + customerPhone + "</h5>\n" +
                 "<h5> Email: " + email + "</h5>\n" +
                 "<h5> Địa chỉ:" + address + "</h5>\n" +
+                "<h5> Ngày thanh toán: " + billDetailDtoInterface.getCreatedDate().format(formatter) + "</h5>\n" +
                 "<h3>Danh sách sản phẩm:</h3>\n" +
-                "<table border=\"1\">\n" +
+                "<table border=\"1\" style=\"border-collapse: collapse;\">\n" +
                 "<tr>\n" +
                 "<th>Tên sản phẩm</th>\n" +
                 "<th>Màu sắc</th>\n" +
@@ -287,8 +310,8 @@ public class BillServiceImpl implements BillService {
         }
         htmlContent += "</table>\n" +
                 "<h5>Tổng tiền: " + currencyFormatter.format(totalMoney) + "</h5>\n" +
-                "<h5>Tiền giảm giá: " + currencyFormatter.format(billDetailDtoInterface.getTienSauKhuyenMai()) + "</h5>\n" +
-                "<h4>Tổng tiền thanh toán: " + currencyFormatter.format(totalMoney - billDetailDtoInterface.getTienSauKhuyenMai()) + "</h4>\n" +
+                "<h5>Tiền giảm giá: " + currencyFormatter.format(billDetailDtoInterface.getTienKhuyenMai()) + "</h5>\n" +
+                "<h4>Tổng tiền thanh toán: " + currencyFormatter.format(totalMoney - billDetailDtoInterface.getTienKhuyenMai()) + "</h4>\n" +
                 "</body>\n" +
                 "</html>";
         return htmlContent;
@@ -305,5 +328,40 @@ public class BillServiceImpl implements BillService {
         billRepository.deleteById(id);
     }
 
+    @Override
+    public Page<BillDto> searchBillJson(SearchBillDto searchBillDto, Pageable pageable) {
+        Specification<Bill> spec = new BillSpecification(searchBillDto);
+        Page<Bill> bills = billRepository.findAll(spec, pageable);
+        return bills.map(this::convertToDto);
+    }
+
+    @Override
+    public Page<BillDto> getAllValidBillToReturn(Pageable pageable) {
+        return billRepository.findValidBillToReturn(pageable).map(this::convertToDto);
+    }
+
+    private BillDto convertToDto(Bill bill) {
+        BillDto billDto = new BillDto();
+        billDto.setId(bill.getId());
+        billDto.setCode(bill.getCode());
+        billDto.setCreateDate(bill.getCreateDate());
+        billDto.setStatus(bill.getStatus());
+        billDto.setUpdateDate(bill.getUpdateDate());
+        CustomerDto customer = new CustomerDto();
+        if(bill.getCustomer() != null) {
+            customer.setName(bill.getCustomer().getName());
+            customer.setId(bill.getCustomer().getId());
+            customer.setCode(bill.getCustomer().getCode());
+            customer.setCode(bill.getCustomer().getCode());
+        }
+        billDto.setCustomer(customer);
+        Double total = Double.valueOf(0);
+        for (BillDetail billDetail:
+             bill.getBillDetail()) {
+            total += billDetail.getQuantity() * billDetail.getMomentPrice();
+        }
+        billDto.setTotalAmount(total);
+        return billDto;
+    }
 
 }
