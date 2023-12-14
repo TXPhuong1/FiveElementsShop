@@ -26,10 +26,12 @@ import org.springframework.stereotype.Service;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.text.DateFormatter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 
@@ -96,6 +98,7 @@ public class BillServiceImpl implements BillService {
 
         Bill bill = billRepository.findById(id).orElseThrow(() -> new NotFoundException("Không tìm thấy bill có mã" + id));
         bill.setStatus(BillStatus.valueOf(status));
+        bill.setUpdateDate(LocalDateTime.now());
         return billRepository.save(bill);
     }
 
@@ -254,6 +257,8 @@ public class BillServiceImpl implements BillService {
             customerPhone = "";
         }
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
         String htmlContent = "<html xmlns:th=\"http://www.thymeleaf.org\">\n" +
                 "<head>\n" +
                 "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"></meta>\n" +
@@ -268,8 +273,9 @@ public class BillServiceImpl implements BillService {
                 "<h5> Số điện thoại :" + customerPhone + "</h5>\n" +
                 "<h5> Email: " + email + "</h5>\n" +
                 "<h5> Địa chỉ:" + address + "</h5>\n" +
+                "<h5> Ngày thanh toán: " + billDetailDtoInterface.getCreatedDate().format(formatter) + "</h5>\n" +
                 "<h3>Danh sách sản phẩm:</h3>\n" +
-                "<table border=\"1\">\n" +
+                "<table border=\"1\" style=\"border-collapse: collapse;\">\n" +
                 "<tr>\n" +
                 "<th>Tên sản phẩm</th>\n" +
                 "<th>Màu sắc</th>\n" +

@@ -3,6 +3,7 @@ package com.project.DuAnTotNghiep.repository;
 import com.project.DuAnTotNghiep.dto.Bill.BillDetailDtoInterface;
 import com.project.DuAnTotNghiep.dto.Bill.BillDetailProduct;
 import com.project.DuAnTotNghiep.dto.Bill.BillDtoInterface;
+import com.project.DuAnTotNghiep.dto.Refund.RefundDto;
 import com.project.DuAnTotNghiep.dto.Statistic.DayInMonthStatistic;
 import com.project.DuAnTotNghiep.dto.Statistic.MonthInYearStatistic;
 import com.project.DuAnTotNghiep.dto.Statistic.OrderStatistic;
@@ -32,9 +33,10 @@ public interface BillRepository extends JpaRepository<Bill, Long>, JpaSpecificat
 
     @Query(value = "SELECT DISTINCT b.id AS maHoaDon,b.code AS maDinhDanh, a.name AS hoVaTen, a.phoneNumber " +
             "AS soDienThoai,b.createDate AS ngayTao, b.amount AS tongTien, b.status AS trangThai, b.invoiceType " +
-            "AS loaiDon, pm.name AS hinhThucThanhToan, coalesce(br.code, '') as maDoiTra " +
+            "AS loaiDon, pm.name AS hinhThucThanhToan, coalesce(br.code, '') as maDoiTra, pmt.orderId as maGiaoDich " +
             "FROM Bill b " +
-            "LEFT JOIN Customer a ON b.customer.id = a.id " +
+            "JOIN Payment pmt on b.id = pmt.bill.id " +
+            " JOIN Customer a ON b.customer.id = a.id " +
             "LEFT JOIN BillDetail bd ON b.id = bd.bill.id " +
             "LEFT JOIN PaymentMethod pm ON b.paymentMethod.id = pm.id LEFT JOIN BillReturn br on b.id = br.bill.id")
     Page<BillDtoInterface> listBill(Pageable pageable);
@@ -70,13 +72,18 @@ public interface BillRepository extends JpaRepository<Bill, Long>, JpaSpecificat
 
     @Query(value = "select distinct b.id as maDonHang,b.code as maDinhDanh,b.billing_address as diaChi," +
             " b.amount as tongTien,b.promotion_price as tienKhuyenMai,a.name as tenKhachHang," +
-            "a.phone_number as soDienThoai,a.email as email, b.status as trangThaiDonHang ," +
+            "a.phone_number as soDienThoai,a.email as email, b.status as trangThaiDonHang, pmt.order_id as maGiaoDich, " +
             "pm.name as phuongThucThanhToan,b.invoice_type as loaiHoaDon, dc.code as voucherName, b.create_date as createdDate " +
             "from bill b full join customer a on b.customer_id=a.id full join discount_code dc on b.discount_code_id=dc.id" +
-            " full join bill_detail bd on b.id=bd.bill_id left join payment_method pm on b.payment_method_id=pm.id where b.id=:maHoaDon",nativeQuery = true)
+            " full join bill_detail bd on b.id=bd.bill_id join payment pmt on b.id = pmt.bill_id left join payment_method pm on b.payment_method_id=pm.id where b.id=:maHoaDon",nativeQuery = true)
     BillDetailDtoInterface getBillDetail(@Param("maHoaDon") Long maHoaDon);
 
-    @Query(value = "select pd.id, bd.id as billDetailId, p.name as tenSanPham,c.name as tenMau, s.name as kichCo, bd.moment_price as giaTien,bd.quantity as soLuong, bd.moment_price*bd.quantity as tongTien " +
+    @Query(value = "select pd.id, bd.id as billDetailId, p.id as productId, p.name as tenSanPham,c.name as tenMau, s.name as kichCo, bd.moment_price as giaTien,bd.quantity as soLuong, bd.moment_price*bd.quantity as tongTien,  (\n" +
+            "           SELECT top(1) link\n" +
+            "           FROM image\n" +
+            "           WHERE p.id = image.product_id\n" +
+
+            "       ) AS imageUrl " +
             "from bill b join bill_detail bd on b.id=bd.bill_id join" +
             " product_detail pd on bd.product_detail_id =pd.id join" +
             " product p on pd.product_id=p.id join color c on pd.color_id=c.id join size s on pd.size_id = s.id " +
@@ -177,4 +184,8 @@ public interface BillRepository extends JpaRepository<Bill, Long>, JpaSpecificat
 
     @Query(value = "select status, count(b.status) as quantity, sum(b.amount) as revenue from bill b group by b.status", nativeQuery = true)
     List<OrderStatistic> statisticOrder();
+
+    @Query(value = "select b.code as billCode, b.id as billId, pm.order_id as orderId, c.name as customerName, b.update_date as cancelDate, b.amount as totalAmount, pm.status_exchange as statusExchange from bill b left join customer c on b.customer_id = c.id  left join payment pm on pm.bill_id = b.id \n" +
+            "join payment_method pme on pme.id = b.payment_method_id where b.status='HUY' and pme.name='CHUYEN_KHOAN' order by b.update_date desc", nativeQuery = true)
+    List<RefundDto> findListNeedRefund();
 }
