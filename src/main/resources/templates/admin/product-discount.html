@@ -119,78 +119,85 @@
                            "previous":   "<"
                        },
                    }
-               });
-
-               $('.close-discount-btn').on('click', function () {
-                   var closeId = $(this).attr('data-close-id')
-                   Swal.fire({
-                       title: 'Đóng giảm giá',
-                       text: 'Bạn chắc chắn muốn đóng giảm giá này',
-                       icon: 'warning',
-                       showCancelButton: true,
-                       confirmButtonText: 'Xác nhân',
-                       cancelButtonText: 'Hủy'
-                   }).then(async (result) => {
-                       if (result.isConfirmed) {
-                           await $.ajax({
-                               type: 'POST',
-                               url: `/api/private/product-discount/${closeId}/status/true`,
-                               dataType: 'json',
-                               success: async function () {
-                                   // Chuyển trang khi người dùng nhấn "OK"
-                                   await Toastify({
-                                       text: "Đóng giảm giá thành công",
-                                       className: "success",
-                                       style: {
-                                           background: "green",
-                                       }
-                                   }).showToast();
-                                   window.location.reload()
-
-                               },
-                               error: function (xhr, status, error) {
-                                   swal("Error", xhr.responseJSON.message, "error")
-                               }
-                           })
-
-                       }
-                   });
                })
-               $('.open-discount-btn').on('click', function () {
-                   var openId = $(this).attr('data-open-id')
-                   Swal.fire({
-                       title: 'Mở giảm giá',
-                       text: 'Bạn chắc chắn muốn mở giảm giá này',
-                       icon: 'warning',
-                       showCancelButton: true,
-                       confirmButtonText: 'Xác nhân',
-                       cancelButtonText: 'Hủy'
-                   }).then(async (result) => {
-                       if (result.isConfirmed) {
-                           await $.ajax({
-                               type: 'POST',
-                               url: `/api/private/product-discount/${openId}/status/false`,
-                               dataType: 'json',
-                               success: async function () {
-                                   // Chuyển trang khi người dùng nhấn "OK"
-                                   await Toastify({
-                                       text: "Mở giảm giá thành công",
-                                       className: "success",
-                                       style: {
-                                           background: "green",
-                                       }
-                                   }).showToast();
-                                   window.location.reload()
+                   .on('draw.dt', () => setEvent())
 
-                               },
-                               error: function (xhr, status, error) {
-                                   swal("Error", xhr.responseJSON.message, "error")
-                               }
-                           })
+               setEvent()
 
-                       }
-                   });
-               })
+               function setEvent() {
+                   $('.close-discount-btn').on('click', function () {
+                       var closeId = $(this).attr('data-close-id')
+                       Swal.fire({
+                           title: 'Đóng giảm giá',
+                           text: 'Bạn chắc chắn muốn đóng giảm giá này',
+                           icon: 'warning',
+                           showCancelButton: true,
+                           confirmButtonText: 'Xác nhân',
+                           cancelButtonText: 'Hủy'
+                       }).then(async (result) => {
+                           if (result.isConfirmed) {
+                               await $.ajax({
+                                   type: 'POST',
+                                   url: `/api/private/product-discount/${closeId}/status/true`,
+                                   dataType: 'json',
+                                   success: async function () {
+                                       // Chuyển trang khi người dùng nhấn "OK"
+                                       await Toastify({
+                                           text: "Đóng giảm giá thành công",
+                                           className: "success",
+                                           style: {
+                                               background: "green",
+                                           }
+                                       }).showToast();
+                                       window.location.reload()
+
+                                   },
+                                   error: function (xhr, status, error) {
+                                       swal("Error", xhr.responseJSON.message, "error")
+                                   }
+                               })
+
+                           }
+                       });
+                   })
+                   $('.open-discount-btn').on('click', function () {
+                       var openId = $(this).attr('data-open-id')
+                       Swal.fire({
+                           title: 'Mở giảm giá',
+                           text: 'Bạn chắc chắn muốn mở giảm giá này',
+                           icon: 'warning',
+                           showCancelButton: true,
+                           confirmButtonText: 'Xác nhân',
+                           cancelButtonText: 'Hủy'
+                       }).then(async (result) => {
+                           if (result.isConfirmed) {
+                               await $.ajax({
+                                   type: 'POST',
+                                   url: `/api/private/product-discount/${openId}/status/false`,
+                                   dataType: 'json',
+                                   success: async function () {
+                                       // Chuyển trang khi người dùng nhấn "OK"
+                                       await Toastify({
+                                           text: "Mở giảm giá thành công",
+                                           className: "success",
+                                           style: {
+                                               background: "green",
+                                           }
+                                       }).showToast();
+                                       window.location.reload()
+
+                                   },
+                                   error: function (xhr, status, error) {
+                                       swal("Error", xhr.responseJSON.message, "error")
+                                   }
+                               })
+
+                           }
+                       });
+                   })
+               }
+
+
            });
 
 
