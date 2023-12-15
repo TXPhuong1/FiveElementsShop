@@ -22,6 +22,8 @@ public class DiscountCode {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @Nationalized
     private String code;
 
     @Nationalized
