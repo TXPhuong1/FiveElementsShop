@@ -302,16 +302,24 @@
         </div>
     </form>
     <div class="modal fade" style="z-index: 3000" id="exampleModalCenter2" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content" style="max-width24: 100%">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="">Điều khoản</h5>
+                    <h5 class="modal-title" style="font-size: px; font-weight: bold">Điều khoản</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    ...
+                    <p>1.	Người mua đã thanh toán bằng cách phương thức thanh toán hợp lệ nhưng không nhận được sản phẩm, sản phẩm bị lỗi hoặc bị hư hại, sai sản phẩm, không ưng ý.</p>
+                    <p>2.	Có thể gửi yêu cầu trả hàng/hoàn tiền trong vòng 7 ngày kể từ lúc đơn hàng được cập nhật giao hàng thành công.</p>
+                    <p>3.	Tất cả các yêu cầu trả hànghoàn tiền phải được thực hiện trên web hoặc liên hệ trực tiếp tới cửa hàng</p>
+                    <p>4.	Phí gửi hàng lại do người mua trả</p>
+                    <p>5.	Mỗi hóa đơn chỉ được đổi trả 1 lần</p>
+                    <p>6.	Chỉ hỗ trợ đổi size, đổi màu, đổi sản phẩm bằng hoặc hơn giá</p>
+                    <p>7.	Người mua đóng gói và gửi trả sản phẩm bao gồm toàn bộ phụ kiện đi kèm, hóa đơn, tem phiếu bảo hành (nếu có) và sản phẩm phải trong tình trạng nguyên vẹn như khi nhận hàng.</p>
+                    <p>8.	Người mua bắt buộc phải quay video hoặc chụp lại ảnh sản phẩm ngay khi nhận được và trong lúc đóng gói hàng trả về để làm bằng chứng đối chiếu/khiếu nại về sau.</p>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
@@ -672,6 +680,10 @@
                     calculateVoucherPrice()
                     calculateTotal()
                 })
+
+                $('#exampleModalCenter').modal('hide')
+
+
                 calculateVoucherPrice()
                 calculateTotal()
             })

@@ -1445,6 +1445,8 @@
                         $('.selected-voucher.active').attr('selected-id', voucherId)
                         $('.selected-voucher.active').html(html)
 
+                        $('#overlay').hide()
+                        $('#voucher-modal').addClass('hidden')
 
                         calculateAllPrice()
                         calculateLastPrice()

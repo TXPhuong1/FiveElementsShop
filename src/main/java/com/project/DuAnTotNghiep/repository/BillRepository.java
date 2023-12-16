@@ -180,7 +180,7 @@ public interface BillRepository extends JpaRepository<Bill, Long>, JpaSpecificat
             "    CONVERT(varchar, b.create_date, 23)\n" +
             "ORDER BY \n" +
             "    CONVERT(varchar, b.create_date, 23)", nativeQuery = true)
-    List<Object[]> statisticRevenueDaily(String fromDate, String toDate);
+    List<Object[]> statisticRevenueDaily( String fromDate, String toDate);
 
     @Query(value = "select status, count(b.status) as quantity, sum(b.amount) as revenue from bill b group by b.status", nativeQuery = true)
     List<OrderStatistic> statisticOrder();

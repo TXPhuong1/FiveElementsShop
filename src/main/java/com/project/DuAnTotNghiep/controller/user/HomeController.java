@@ -29,7 +29,7 @@ public class HomeController {
     private CategoryService categoryService;
 
     @GetMapping("/")
-    public String gethome(Model model, SearchProductDto searchProductDto, @PageableDefault(size = 18) Pageable pageable) {
+    public String gethome(Model model, SearchProductDto searchProductDto, @PageableDefault(size = 20, sort = "createDate", direction = Sort.Direction.DESC) Pageable pageable) {
         List<Category> categories = categoryService.getAll();
         Page<ProductDto> products = productService.searchProduct(searchProductDto, pageable);
 
