@@ -62,7 +62,7 @@ public class ProductController {
 
     @GetMapping("/product-all")
     public String getAllProduct(Model model, @RequestParam(name = "page", defaultValue = "0") int page,
-                                @RequestParam(name = "sort", defaultValue = "name,asc") String sortField,
+                                @RequestParam(name = "sort", defaultValue = "createDate,desc") String sortField,
                                 @RequestParam(name = "maSanPham", required = false) String maSanPham,
                                 @RequestParam(name = "tenSanPham", required = false) String tenSanPham,
                                 @RequestParam(name = "nhanHang", required = false) Long nhanHang,
@@ -145,13 +145,13 @@ public class ProductController {
 
     @PostMapping("/product-save")
     @Transactional(rollbackOn = Exception.class)
-    public String handlePart2(@ModelAttribute("form") CreateProductDetailsForm form, HttpSession session, @RequestParam("files") List<MultipartFile> files, RedirectAttributes redirectAttributes) throws IOException {
+    public void handlePart2(@ModelAttribute("form") CreateProductDetailsForm form, HttpSession session, @RequestParam("files") List<MultipartFile> files, RedirectAttributes redirectAttributes) throws IOException {
         // Kiểm tra xem dữ liệu từ phần 1 đã tồn tại trong session hay chưa
         String randomCreateKey = (String) session.getAttribute("randomCreateKey");
         Product part1Data = (Product) session.getAttribute("createProductPart1" + randomCreateKey);
         if (part1Data == null) {
             // Nếu dữ liệu phần 1 không tồn tại, điều hướng người dùng trở lại phần 1
-            return "redirect:/admin/product-create";
+//            return "redirect:/admin/product-create";
         } else  {
             List<ProductDetail> productDetails = form.getProductDetailList();
             for (ProductDetail productDetail : productDetails) {
@@ -174,7 +174,7 @@ public class ProductController {
         session.removeAttribute("createProductPart1" + randomCreateKey);
 
         redirectAttributes.addFlashAttribute("successMessage", "Thêm sản phẩm " + part1Data.getCode() + " thành công");
-        return "redirect:/admin/product-all"; // Trả về trang thành công
+//        return "redirect:/admin/product-all"; // Trả về trang thành công
     }
 
     @GetMapping("/product-edit/{productCode}")
@@ -258,13 +258,14 @@ public class ProductController {
             }
             imageService.removeImageByIds(imageRemoveIds);
             part1Data.setImage(images);
+            part1Data.setUpdatedDate(LocalDateTime.now());
             productService.save(part1Data);
         }
 
         session.removeAttribute("randomUpdateKey");
         session.removeAttribute("editProductPart1" + randomUpdateKey);
         redirectAttributes.addFlashAttribute("successMessage", "Sản phẩm được chỉnh sửa thành công");
-        return "redirect:/admin/product-all"; // Trả về trang thành công
+        return "redirect:/admin/chi-tiet-san-pham/" + part1Data.getCode();
     }
 
     @ModelAttribute("listSize")

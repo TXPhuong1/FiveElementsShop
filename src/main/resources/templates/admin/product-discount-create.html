@@ -6,17 +6,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.1.1/flowbite.min.css" rel="stylesheet"/>
+<!--    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.1.1/flowbite.min.css" rel="stylesheet"/>-->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.6.0/pagination.min.css" integrity="sha512-K1k7jSn9RDKEcn/ugqVVvWYu0bcS3q1w6m/5pQSnrj0bCfIqF6Wk49lkmckSb4wglvTP9V17LtS0q0XxYccXbg==" crossorigin="anonymous" referrerpolicy="no-referrer" />-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/simplePagination.js/1.4/jquery.simplePagination.min.js" integrity="sha512-J4OD+6Nca5l8HwpKlxiZZ5iF79e9sgRGSf0GxLsL1W55HHdg48AEiKCXqvQCNtA1NOMOVrw15DXnVuPpBm2mPg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simplePagination.js/1.4/simplePagination.min.css" integrity="sha512-85KEMf8eFSgiFrs/gGSVg0S6JqrmCtvVcA+s1PTMl/qtqH0ucmhrYrAFXock7iSjCaVcCMUNgCEF+sdQBUp7pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+
+            z-index: 2;
+            display: none;
+        }
+    </style>
 </head>
 <body>
+<div id="overlay"></div>
 <!-- Main modal -->
 <div class="main-discount-create bg-gray-100 min-h-screen">
-    <div id="authentication-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div id="apply-all-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-1/4 translate-x-1/4 left-1/4 z-50 justify-center items-center w-full h-[calc(100%-1rem)] max-h-full">
         <div class="relative p-4 w-full max-w-md max-h-full">
             <!-- Modal content -->
             <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
@@ -25,7 +39,7 @@
                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
                         Thiết lập toàn bộ
                     </h3>
-                    <button type="button" class="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="authentication-modal">
+                    <button type="button" id="close-modal-apply-all" class="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="authentication-modal">
                         <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                         </svg>
@@ -52,7 +66,7 @@
                             <span class="error text-red-500 text-sm"></span>
                         </div>
 
-                        <button id="apply-all-btn" type="submit" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Áp dụng</button>
+                        <button id="apply-all-btn" type="button" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Áp dụng</button>
                     </form>
                 </div>
             </div>
@@ -106,7 +120,7 @@
                     <div class="flex">
                         <label for="search-dropdown"
                                class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Your Email</label>
-                        <button id="dropdown-button" data-dropdown-toggle="dropdown" class="flex-shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm
+                        <button id="dropdown-button" data-dropdown-toggle="dropdown" class="flex-shrink-0 z-1 inline-flex items-center py-2.5 px-4 text-sm
                             font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600"
                                 type="button">
                             <span>Tất cả các loại</span>
@@ -200,7 +214,7 @@
                         <div class="bg-zinc-50 border border-gray-200">
                             <div class="flex justify-between">
                                 <span class="font-bold py-2 px-2">Sản phẩm đã chọn</span>
-                                <span class="text-blue-500 py-2 px-2 cursor-pointer hover:text-blue-700" data-modal-target="authentication-modal" data-modal-toggle="authentication-modal">Áp dụng tất cả</span>
+                                <span id="open-modal-btn" class="text-blue-500 py-2 px-2 cursor-pointer hover:text-blue-700" data-modal-target="authentication-modal" data-modal-toggle="authentication-modal">Áp dụng tất cả</span>
                                 <span class="text-blue-500 py-2 px-2 cursor-pointer hover:text-blue-700" id="remove-all-select">Bỏ chọn toàn bộ</span>
                             </div>
                         </div>
@@ -225,7 +239,7 @@
 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script th:src="@{/admin/assets/js/flowbite.min.js}"></script>
+<!--<script th:src="@{/admin/assets/js/flowbite.min.js}"></script>-->
 <script type="module">
     import { Modal } from '/admin/assets/js/flowbite.min'
 
@@ -242,25 +256,37 @@
         $('#start-date-all').val(getCurrentDate())
         $('#end-date-all').val(getLastDayOfMonth())
 
-        Validator({
-            form: '#apply-all-form',
-            formGroupSelector: '.form-group',
-            errorSelector: '.error',
-            rules: [
-                Validator.isRequired('#percentage-all', 'Vui lòng nhập phần trăm giảm giá'),
-                Validator.isRequired('#start-date-all', 'Vui lòng nhập ngày bắt đầu'),
-                Validator.isRequired('#end-date-all', 'Vui lòng nhập ngày kết thúc'),
-            ],
-            onSubmit: function (data) {
-                const percent = $('#percentage-all').val()
-                const startDate = $("#start-date-all").val()
-                const endDate = $('#end-date-all').val()
+        // Validator({
+        //     form: '#apply-all-form',
+        //     formGroupSelector: '.form-group',
+        //     errorSelector: '.error',
+        //     rules: [
+        //         Validator.isRequired('#percentage-all', 'Vui lòng nhập phần trăm giảm giá'),
+        //         Validator.isRequired('#start-date-all', 'Vui lòng nhập ngày bắt đầu'),
+        //         Validator.isRequired('#end-date-all', 'Vui lòng nhập ngày kết thúc'),
+        //     ],
+        //     onSubmit: function (data) {
+        //         const percent = $('#percentage-all').val()
+        //         const startDate = $("#start-date-all").val()
+        //         const endDate = $('#end-date-all').val()
+        //
+        //         $('.percentage').val(percent).trigger('input')
+        //         $('.startDate').val(startDate)
+        //         $('.endDate').val(endDate)
+        //         $('#apply-all-modal').hide()
+        //         $('#overlay').hide()
+        //     }
+        // });
 
-                $('.percentage').val(percent).trigger('input')
-                $('.startDate').val(startDate)
-                $('.endDate').val(endDate)
-            }
-        });
+        $('#open-modal-btn').on('click', function () {
+            $('#apply-all-modal').show()
+            $('#overlay').show()
+        })
+
+        $('#close-modal-apply-all').on('click', function () {
+            $('#apply-all-modal').hide()
+            $('#overlay').hide()
+        })
 
         $('#apply-all-form').on('submit', function () {
             if($("#start-date-all").val() >= $('#end-date-all').val()) {
@@ -358,23 +384,39 @@
             });
         }
 
-        const $targetEl = document.getElementById('authentication-modal');
-        const instanceOptions = {
-            id: 'authentication-modal',
-            override: true
-        };
-        const modal = new Modal($targetEl);
+        // const $targetEl = document.getElementById('authentication-modal');
+        // const instanceOptions = {
+        //     id: 'authentication-modal',
+        //     override: true
+        // };
+        // const modal = new Modal($targetEl);
 
         //
-        // $('#apply-all-btn').on('click', function () {
-        //     const percent = $('#percentage-all').val()
-        //     const startDate = $("#start-date-all").val()
-        //     const endDate = $('#end-date-all').val()
-        //
-        //     $('.percentage').val(percent).trigger('input')
-        //     $('.startDate').val(startDate)
-        //     $('.endDate').val(endDate)
-        // })
+        $('#apply-all-btn').on('click', function () {
+            const percent = $('#percentage-all').val()
+            const startDate = $("#start-date-all").val()
+            const endDate = $('#end-date-all').val()
+
+            $('.percentage').val(percent).trigger('input')
+            $('.startDate').val(startDate)
+            $('.endDate').val(endDate)
+            $('#apply-all-modal').hide()
+            $('#overlay').hide()
+        })
+
+        $('#percentage-all').on('input', function () {
+            if($(this).val() > 98) {
+                $(this).val(98);
+                Toastify({
+                    text: "Không thể nhập quá 98%",
+                    className: "error",
+                    style: {
+                        background: "red",
+                    }
+                }).showToast();
+                return
+            }
+        })
 
 
         // Handle search product
@@ -640,15 +682,16 @@
 
         function handleInputPrice() {
             $(".percentage").on('input change', function () {
-                if(parseFloat($(this).val()) > 100) {
-                    $(this).val(100);
+                if(parseFloat($(this).val()) > 98) {
+                    $(this).val(98);
                     Toastify({
-                        text: "Không thể nhập quá 100%",
+                        text: "Không thể nhập quá 98%",
                         className: "error",
                         style: {
                             background: "red",
                         }
                     }).showToast();
+                    return
                 }
                 var initprice = removeAnyNonDigit($(this).closest('.product-select-item').find('.product-select-price').text())
                 var percentValue = $(this).val()

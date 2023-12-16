@@ -85,324 +85,336 @@
 
     <script th:inline="javascript">
 
-            // Khoi tao list detail color and size hiện tại để chuẩn bị cho việc check trùng size và color
-            var listDetail = []
+        // Khoi tao list detail color and size hiện tại để chuẩn bị cho việc check trùng size và color
+        var listDetail = []
 
-            document.querySelectorAll(".form-row").forEach(item => {
-                var color = item.querySelector('.color-select').value;
-                var size = item.querySelector('.size-select').value;
+        document.querySelectorAll(".form-row").forEach(item => {
+            var color = item.querySelector('.color-select').value;
+            var size = item.querySelector('.size-select').value;
+            listDetail.push({
+                color: color,
+                size: size
+            })
+        })
+
+        var previousColorValue
+        $('.color-select').on('click', function () {
+            // Lưu giá trị hiện tại khi phần tử nhận sự tập trung (focus)
+            previousColorValue = $(this).val();
+        }).on('change', function () {
+            var currentValue = $(this).val();
+            var currentSize = $(this).closest('.form-row').find('.size-select').val();
+            if(checkDuplidateExists(currentValue, currentSize)) {
+                $(this).val(previousColorValue)
+
+            } else {
+                listDetail = listDetail.filter(item => item.color !== previousColorValue || item.size !== currentSize)
                 listDetail.push({
-                    color: color,
-                    size: size
+                    color: currentValue,
+                    size: currentSize
                 })
+            }
+        });
+
+        var previousSizeValue
+        $('.size-select').on('click', function () {
+            // Lưu giá trị hiện tại khi phần tử nhận sự tập trung (focus)
+            previousSizeValue = $(this).val();
+        }).on('change', function () {
+            var currentValue = $(this).val();
+            var currentColor = $(this).closest('.form-row').find('.color-select').val();
+            if(checkDuplidateExists(currentColor, currentValue)) {
+                $(this).val(previousSizeValue)
+
+            } else {
+                listDetail = listDetail.filter(item => item.color !== currentColor || item.size !== previousSizeValue)
+                listDetail.push({
+                    color: currentColor,
+                    size: currentValue
+                })
+            }
+        });
+
+        function checkDuplidateExists(color, size) {
+            var isdup = false
+            listDetail.forEach(item  => {
+                if(item.color == color && item.size == size) {
+                    Toastify({
+                        text: "Màu sắc và cỡ đã tồn tại",
+                        style: {
+                            color: "white",
+                            background: "red",
+                        }
+                    }).showToast();
+                    isdup = true
+                    return
+                }
+            })
+            return isdup
+        }
+
+        //XỬ LÝ THÊM THUỘC TÍNH
+        // bắt sự kiện xóa ảnh
+        var removeImageId = []
+        $('.delete-img-btn').on('click', function () {
+            const selectedImageEle = $(this).closest('.selected-file')
+            removeImageId.push(selectedImageEle.find('.exists-image').attr("data-image"))
+            selectedImageEle.remove()
+        })
+
+        // Xử lý thêm thuộc tính
+        function addItem() {
+            var template = document.querySelector('.form-table').cloneNode(true);
+            var formRows = template.querySelectorAll('.form-row');
+
+            // Update the index to ensure uniqueness for the new product detail
+            var newIndex = document.querySelectorAll('.form-table').length;
+
+            // Update the names of input fields to ensure uniqueness
+            template.querySelectorAll('input, select').forEach(function(input) {
+                var name = input.getAttribute('name');
+                if (name) {
+                    input.setAttribute('name', name.replace('productDetailList[0]', 'productDetailList[' + newIndex +']'));
+                    input.value = ''; // Clear input values if needed
+                }
+            });
+
+            template.querySelector('.product-price').value = 0
+            template.querySelector('.product-quantity').value = 0
+
+            const deleteButtonContainer = document.createElement('div')
+            const deleteButton = document.createElement('button');
+            deleteButton.type = 'button';
+            deleteButton.classList.add('btn', 'btn-danger', 'mt-3');
+            deleteButton.innerHTML = '<i class="fa fa-trash" aria-hidden="true"></i>';
+            deleteButtonContainer.appendChild(deleteButton)
+
+            template.querySelector('.form-row').appendChild(deleteButtonContainer)
+
+            document.querySelector('.m-3').appendChild(template);
+            var color = ''
+            var size = ''
+            template.querySelector(".color-select").addEventListener('change', function (e) {
+                color = e.target.value
+                if(!checkDuplicateSizeAndColor(color, size, template) && color != '' && template.querySelector(".size-select").value != '') {
+                    listDetail.push({
+                        color: color,
+                        size: size
+                    })
+                }
             })
 
-            var previousColorValue
-            $('.color-select').on('click', function () {
-                // Lưu giá trị hiện tại khi phần tử nhận sự tập trung (focus)
-                previousColorValue = $(this).val();
-            }).on('change', function () {
-                var currentValue = $(this).val();
-                var currentSize = $(this).closest('.form-row').find('.size-select').val();
-                if(checkDuplidateExists(currentValue, currentSize)) {
-                    $(this).val(previousColorValue)
-
-                } else {
-                    listDetail = listDetail.filter(item => item.color !== previousColorValue || item.size !== currentSize)
+            template.querySelector(".size-select").addEventListener('change', function (e) {
+                size = e.target.value
+                if(!checkDuplicateSizeAndColor(color, size, template) && size != '' && template.querySelector(".color-select").value != '') {
                     listDetail.push({
-                        color: currentValue,
-                        size: currentSize
+                        color: color,
+                        size: size
                     })
                 }
-            });
 
-            var previousSizeValue
-            $('.size-select').on('click', function () {
-                // Lưu giá trị hiện tại khi phần tử nhận sự tập trung (focus)
-                previousSizeValue = $(this).val();
-            }).on('change', function () {
-                var currentValue = $(this).val();
-                var currentColor = $(this).closest('.form-row').find('.color-select').val();
-                if(checkDuplidateExists(currentColor, currentValue)) {
-                    $(this).val(previousSizeValue)
+            })
 
-                } else {
-                    listDetail = listDetail.filter(item => item.color !== currentColor || item.size !== previousSizeValue)
-                    listDetail.push({
-                        color: currentColor,
-                        size: currentValue
-                    })
-                }
-            });
-
-            function checkDuplidateExists(color, size) {
-                var isdup = false
-                listDetail.forEach(item  => {
-                    if(item.color == color && item.size == size) {
-                        Toastify({
-                            text: "Màu sắc và cỡ đã tồn tại",
-                            style: {
-                                color: "white",
-                                background: "red",
-                            }
-                        }).showToast();
-                        isdup = true
-                        return
-                    }
-                })
-                return isdup
+            deleteButton.onclick = function (e) {
+                document.querySelector('.m-3').removeChild(template)
+                removeDetailObj(color, size)
             }
 
-            //XỬ LÝ THÊM THUỘC TÍNH
-            // bắt sự kiện xóa ảnh
-            var removeImageId = []
-            $('.delete-img-btn').on('click', function () {
-                const selectedImageEle = $(this).closest('.selected-file')
-                removeImageId.push(selectedImageEle.find('.exists-image').attr("data-image"))
-                selectedImageEle.remove()
-            })
+            //Call generateRandomBarcode
+            template.querySelector('.barcode-select').value = generateRandomBarcode()
 
-            // Xử lý thêm thuộc tính
-            function addItem() {
-                var template = document.querySelector('.form-table').cloneNode(true);
-                var formRows = template.querySelectorAll('.form-row');
+        }
 
-                // Update the index to ensure uniqueness for the new product detail
-                var newIndex = document.querySelectorAll('.form-table').length;
+        function generateRandomBarcode() {
+            return Math.floor(100000000000 + Math.random() * 900000000000).toString();
+        }
 
-                // Update the names of input fields to ensure uniqueness
-                template.querySelectorAll('input, select').forEach(function(input) {
-                    var name = input.getAttribute('name');
-                    if (name) {
-                        input.setAttribute('name', name.replace('productDetailList[0]', 'productDetailList[' + newIndex +']'));
-                        input.value = ''; // Clear input values if needed
-                    }
-                });
+        function removeDetailObj(color, size) {
 
-                template.querySelector('.product-price').value = 0
-                template.querySelector('.product-quantity').value = 0
+            listDetail = listDetail.filter(function (obj) {
+                return obj.color !== color || obj.size !== size;
+            });
+        }
 
-                const deleteButtonContainer = document.createElement('div')
-                const deleteButton = document.createElement('button');
-                deleteButton.type = 'button';
-                deleteButton.classList.add('btn', 'btn-danger', 'mt-3');
-                deleteButton.innerHTML = '<i class="fa fa-trash" aria-hidden="true"></i>';
-                deleteButtonContainer.appendChild(deleteButton)
-
-                template.querySelector('.form-row').appendChild(deleteButtonContainer)
-
-                document.querySelector('.m-3').appendChild(template);
-                var color = ''
-                var size = ''
-                template.querySelector(".color-select").addEventListener('change', function (e) {
-                    color = e.target.value
-                    if(!checkDuplicateSizeAndColor(color, size, template) && color != '' && template.querySelector(".size-select").value != '') {
-                        listDetail.push({
-                            color: color,
-                            size: size
-                        })
-                    }
-                })
-
-                template.querySelector(".size-select").addEventListener('change', function (e) {
-                    size = e.target.value
-                    if(!checkDuplicateSizeAndColor(color, size, template) && size != '' && template.querySelector(".color-select").value != '') {
-                        listDetail.push({
-                            color: color,
-                            size: size
-                        })
-                    }
-
-                })
-
-                deleteButton.onclick = function (e) {
+        function checkDuplicateSizeAndColor(color, size, template) {
+            listDetail.forEach(item => {
+                if(item.color == color && item.size == size) {
                     document.querySelector('.m-3').removeChild(template)
-                    removeDetailObj(color, size)
+                    Toastify({
+                        text: "Màu sắc và cỡ đã tồn tại",
+                        style: {
+                            color: "white",
+                            background: "red",
+                        }
+                    }).showToast();
+                    return true
                 }
+            })
+            return false
+        }
 
-                //Call generateRandomBarcode
-                template.querySelector('.barcode-select').value = generateRandomBarcode()
 
-            }
+        //Handle file input
+        const fileInput = document.getElementById("file-input")
+        fileInput.addEventListener('change', (e) => displaySelectedImages(e))
+        const selectedFileNames = new Set();
+        var fileSend = [];
+        function displaySelectedImages(event) {
+            const selectedImagesContainer = document.getElementById('selected-images');
 
-            function generateRandomBarcode() {
-                return Math.floor(100000000000 + Math.random() * 900000000000).toString();
-            }
+            const files = event.target.files;
 
-            function removeDetailObj(color, size) {
-
-                listDetail = listDetail.filter(function (obj) {
-                    return obj.color !== color || obj.size !== size;
-                });
-            }
-
-            function checkDuplicateSizeAndColor(color, size, template) {
-                listDetail.forEach(item => {
-                    if(item.color == color && item.size == size) {
-                        document.querySelector('.m-3').removeChild(template)
-                        Toastify({
-                            text: "Màu sắc và cỡ đã tồn tại",
-                            style: {
-                                color: "white",
-                                background: "red",
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                // Check if the selected file is an image
+                if (file.type.startsWith('image/')) {
+                    const fileSizeInMB = file.size / (1024 * 1024);
+                    if(fileSizeInMB > 3) {
+                        swal("Lỗi", "Vui lòng chọn ảnh có dung lượng < 3MB")
+                    } else  {
+                        const fileName = file.name
+                        if (!selectedFileNames.has(fileName))
+                        {
+                            if($('.selected-file').length > 4) {
+                                Swal.fire("Lỗi", "Bạn chỉ được thêm tối đa 5 ảnh", 'error')
+                                return
                             }
-                        }).showToast();
-                        return true
-                    }
-                })
-                return false
-            }
+
+                            fileSend.push(file);
+                            const reader = new FileReader();
+
+                            reader.onload = function (e) {
+                                // Create a new div for the image
+                                const imageDiv = document.createElement('div');
+                                imageDiv.className = 'selected-file me-2';
+
+                                // Create an image element
+                                const image = document.createElement('img');
+                                image.src = e.target.result;
+                                image.alt = 'Selected Image';
+                                image.width = 100;
+                                image.height = 120;
+
+                                // Create a div for file details
 
 
-            //Handle file input
-            const fileInput = document.getElementById("file-input")
-            fileInput.addEventListener('change', (e) => displaySelectedImages(e))
-            const selectedFileNames = new Set();
-            var fileSend = [];
-            function displaySelectedImages(event) {
-                const selectedImagesContainer = document.getElementById('selected-images');
-
-                const files = event.target.files;
-
-                for (let i = 0; i < files.length; i++) {
-                    const file = files[i];
-                    // Check if the selected file is an image
-                    if (file.type.startsWith('image/')) {
-                        const fileSizeInMB = file.size / (1024 * 1024);
-                        if(fileSizeInMB > 3) {
-                            swal("Lỗi", "Vui lòng chọn ảnh có dung lượng < 3MB")
-                        } else  {
-                            const fileName = file.name
-                            if (!selectedFileNames.has(fileName))
-                            {
-                                if($('.selected-file').length > 4) {
-                                    Swal.fire("Lỗi", "Bạn chỉ được thêm tối đa 5 ảnh", 'error')
-                                    return
-                                }
-
-                                fileSend.push(file);
-                                const reader = new FileReader();
-
-                                reader.onload = function (e) {
-                                    // Create a new div for the image
-                                    const imageDiv = document.createElement('div');
-                                    imageDiv.className = 'selected-file me-2';
-
-                                    // Create an image element
-                                    const image = document.createElement('img');
-                                    image.src = e.target.result;
-                                    image.alt = 'Selected Image';
-                                    image.width = 100;
-                                    image.height = 120;
-
-                                    // Create a div for file details
-
-
-                                    // Create a button to remove the image
-                                    const removeButton = document.createElement('div');
-                                    removeButton.innerHTML = `<div class="file-details">
+                                // Create a button to remove the image
+                                const removeButton = document.createElement('div');
+                                removeButton.innerHTML = `<div class="file-details">
                                             <span class="text-danger">
                                                 <i class="fas fa-times-circle"></i>
                                             </span>
                                         </div>`
-                                    removeButton.onclick = function () {
-                                        // Remove the selected image when the button is clicked
-                                        selectedImagesContainer.removeChild(imageDiv);
-                                    };
-                                    // Append the image and remove button to the div
-                                    imageDiv.appendChild(image);
-                                    imageDiv.appendChild(removeButton);
-
-                                    // Append the image div to the selectedImagesContainer
-                                    selectedImagesContainer.appendChild(imageDiv);
+                                removeButton.onclick = function () {
+                                    // Remove the selected image when the button is clicked
+                                    selectedImagesContainer.removeChild(imageDiv);
                                 };
+                                // Append the image and remove button to the div
+                                imageDiv.appendChild(image);
+                                imageDiv.appendChild(removeButton);
 
-                                reader.readAsDataURL(file);
-                            }
+                                // Append the image div to the selectedImagesContainer
+                                selectedImagesContainer.appendChild(imageDiv);
+                            };
+
+                            reader.readAsDataURL(file);
                         }
-
                     }
+
                 }
             }
+        }
 
-            //============================= XỬ LÝ SUBMIT FORM =====================================
-            //=====================================================================================
-            document.getElementById("myForm").addEventListener('submit', async function (e) {
-                e.preventDefault()
-                if($('.selected-file').length < 1) {
-                    swal('Lỗi', "Vui lòng chọn ít nhất một hình ảnh", "error")
-                    return
+        //============================= XỬ LÝ SUBMIT FORM =====================================
+        //=====================================================================================
+        document.getElementById("myForm").addEventListener('submit', async function (e) {
+            e.preventDefault()
+            if($('.selected-file').length < 1) {
+                swal('Lỗi', "Vui lòng chọn ít nhất một hình ảnh", "error")
+                return
+            }
+            var canAdd = true
+            $('.color-select').each(function(index, item) {
+                console.log($(item).val())
+                if ($(item).val() == null) {
+                    swal("Lỗi", "Vui lòng chọn màu cho sản phẩm");
+                    canAdd = false;
+                    return false; // To break out of the loop
                 }
-                var canAdd = true
-                $('.color-select').each(function(index, item) {
-                    console.log($(item).val())
-                    if ($(item).val() == null) {
-                        swal("Lỗi", "Vui lòng chọn màu cho sản phẩm");
-                        canAdd = false;
-                        return false; // To break out of the loop
+            });
+
+            $('.size-select').each(function(index, item) {
+                if ($(item).val() == null) {
+                    swal("Lỗi", "Vui lòng chọn kích cỡ cho sản phẩm");
+                    canAdd = false;
+                    return false; // To break out of the loop
+                }
+            });
+            if(!canAdd) {
+                return false
+            }
+
+            var formData = new FormData(this)
+            formData.append("imageRemoveIds", removeImageId)
+            if(fileSend.length > 0) {
+                fileSend.forEach(file => formData.append("files", file))
+            }
+            await fetch("/admin/product-save-edit", {
+                method: "POST",
+                body: formData,
+            }).then((data) => {
+                Swal.fire({
+                    title: "Thông báo",
+                    text: "Sản phẩm được sửa thành công",
+                    icon: "success"
+                }).then((result) => {
+                    if(result.isConfirmed) {
+                        window.location.href = "/admin/product-all"
                     }
                 });
-
-                $('.size-select').each(function(index, item) {
-                    if ($(item).val() == null) {
-                        swal("Lỗi", "Vui lòng chọn kích cỡ cho sản phẩm");
-                        canAdd = false;
-                        return false; // To break out of the loop
-                    }
-                });
-                if(!canAdd) {
-                    return false
-                }
-
-                var formData = new FormData(this)
-                formData.append("imageRemoveIds", removeImageId)
-                if(fileSend.length > 0) {
-                    fileSend.forEach(file => formData.append("files", file))
-                }
-                await fetch("/admin/product-save-edit", {
-                    method: "POST",
-                    body: formData,
-                })
-
-                window.location = "/admin/product-all";
-
             })
 
-            function onlyAllowNumberInput(e) {
-                const key = e.key;
-                if (key === '-') {
-                    e.preventDefault();
-                }
-            }
 
-            function onlyAllowNumberInput2(e) {
-                const key = e.key;
-                const keyCode = e.keyCode || e.which;
 
-                // Allow backspace (key code 8)
-                if (keyCode === 8) {
-                    return;
-                }
+            // window.location = "/admin/product-all";
 
-                // Allow digits (key codes 48-57) and numpad digits (key codes 96-105)
-                if ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 96 && keyCode <= 105)) {
-                    return;
-                }
+        })
 
+        function onlyAllowNumberInput(e) {
+            const key = e.key;
+            if (key === '-') {
                 e.preventDefault();
             }
-            $('.product-quantity').on('keydown', function (e) {
-                onlyAllowNumberInput(e)
-            })
-            $('.product-quantity').on('input change', function (e) {
-                if($(this).val() < 0) {
-                    $(this).val(0)
-                }
-            })
+        }
 
-            $('.product-price').on('keydown', function (e) {
-                onlyAllowNumberInput2(e)
-            })
+        function onlyAllowNumberInput2(e) {
+            const key = e.key;
+            const keyCode = e.keyCode || e.which;
+
+            // Allow backspace (key code 8)
+            if (keyCode === 8) {
+                return;
+            }
+
+            // Allow digits (key codes 48-57) and numpad digits (key codes 96-105)
+            if ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 96 && keyCode <= 105)) {
+                return;
+            }
+
+            e.preventDefault();
+        }
+        $('.product-quantity').on('keydown', function (e) {
+            onlyAllowNumberInput(e)
+        })
+        $('.product-quantity').on('input change', function (e) {
+            if($(this).val() < 0) {
+                $(this).val(0)
+            }
+        })
+
+        $('.product-price').on('keydown', function (e) {
+            onlyAllowNumberInput2(e)
+        })
     </script>
 
 </div>
