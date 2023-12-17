@@ -145,7 +145,7 @@ public class ProductController {
 
     @PostMapping("/product-save")
     @Transactional(rollbackOn = Exception.class)
-    public void handlePart2(@ModelAttribute("form") CreateProductDetailsForm form, HttpSession session, @RequestParam("files") List<MultipartFile> files, RedirectAttributes redirectAttributes) throws IOException {
+    public String handlePart2(@ModelAttribute("form") CreateProductDetailsForm form, HttpSession session, @RequestParam("files") List<MultipartFile> files, RedirectAttributes redirectAttributes) throws IOException {
         // Kiểm tra xem dữ liệu từ phần 1 đã tồn tại trong session hay chưa
         String randomCreateKey = (String) session.getAttribute("randomCreateKey");
         Product part1Data = (Product) session.getAttribute("createProductPart1" + randomCreateKey);
@@ -174,7 +174,7 @@ public class ProductController {
         session.removeAttribute("createProductPart1" + randomCreateKey);
 
         redirectAttributes.addFlashAttribute("successMessage", "Thêm sản phẩm " + part1Data.getCode() + " thành công");
-//        return "redirect:/admin/product-all"; // Trả về trang thành công
+        return "redirect:/admin/product-all"; // Trả về trang thành công
     }
 
     @GetMapping("/product-edit/{productCode}")
