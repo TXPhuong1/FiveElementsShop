@@ -45,7 +45,7 @@
     <script>
         $(document).ready(function () {
             /*<![CDATA[*/
-            var isUserLoggedIn = `[[${#authorization.expression('isAuthenticated()')}]]`
+            var isUserLoggedIn = [[${#authorization.expression('isAuthenticated()')}]]
             /*]]>*/
             if(isUserLoggedIn) {
                 $.ajax({

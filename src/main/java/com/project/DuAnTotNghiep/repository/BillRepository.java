@@ -36,7 +36,7 @@ public interface BillRepository extends JpaRepository<Bill, Long>, JpaSpecificat
             "AS loaiDon, pm.name AS hinhThucThanhToan, coalesce(br.code, '') as maDoiTra, pmt.orderId as maGiaoDich " +
             "FROM Bill b " +
             "JOIN Payment pmt on b.id = pmt.bill.id " +
-            " JOIN Customer a ON b.customer.id = a.id " +
+            "LEFT JOIN Customer a ON b.customer.id = a.id " +
             "LEFT JOIN BillDetail bd ON b.id = bd.bill.id " +
             "LEFT JOIN PaymentMethod pm ON b.paymentMethod.id = pm.id LEFT JOIN BillReturn br on b.id = br.bill.id")
     Page<BillDtoInterface> listBill(Pageable pageable);
@@ -180,7 +180,7 @@ public interface BillRepository extends JpaRepository<Bill, Long>, JpaSpecificat
             "    CONVERT(varchar, b.create_date, 23)\n" +
             "ORDER BY \n" +
             "    CONVERT(varchar, b.create_date, 23)", nativeQuery = true)
-    List<Object[]> statisticRevenueDaily( String fromDate, String toDate);
+    List<Object[]> statisticRevenueDaily(String fromDate, String toDate);
 
     @Query(value = "select status, count(b.status) as quantity, sum(b.amount) as revenue from bill b group by b.status", nativeQuery = true)
     List<OrderStatistic> statisticOrder();
