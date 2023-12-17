@@ -188,4 +188,35 @@ public interface BillRepository extends JpaRepository<Bill, Long>, JpaSpecificat
     @Query(value = "select b.code as billCode, b.id as billId, pm.order_id as orderId, c.name as customerName, b.update_date as cancelDate, b.amount as totalAmount, pm.status_exchange as statusExchange from bill b left join customer c on b.customer_id = c.id  left join payment pm on pm.bill_id = b.id \n" +
             "join payment_method pme on pme.id = b.payment_method_id where b.status='HUY' and pme.name='CHUYEN_KHOAN' order by b.update_date desc", nativeQuery = true)
     List<RefundDto> findListNeedRefund();
+
+    @Query(value = "SELECT DISTINCT b.id AS maHoaDon,b.code AS maDinhDanh, a.name AS hoVaTen, a.phoneNumber " +
+            "AS soDienThoai,b.createDate AS ngayTao, b.amount AS tongTien, b.status AS trangThai, b.invoiceType " +
+            "AS loaiDon, pm.name AS hinhThucThanhToan, coalesce(br.code, '') as maDoiTra, pmt.orderId as maGiaoDich " +
+            "FROM Bill b " +
+            "JOIN Payment pmt on b.id = pmt.bill.id " +
+            "LEFT JOIN Customer a ON b.customer.id = a.id " +
+            "LEFT JOIN BillDetail bd ON b.id = bd.bill.id " +
+            "LEFT JOIN PaymentMethod pm ON b.paymentMethod.id = pm.id LEFT JOIN BillReturn br on b.id = br.bill.id")
+    List<BillDtoInterface> listBill();
+
+    @Query(value = "SELECT DISTINCT b.id AS maHoaDon,b.code AS maDinhDanh, a.name AS hoVaTen, a.phoneNumber " +
+            "AS soDienThoai, b.createDate AS ngayTao, b.amount AS tongTien, b.status AS trangThai, b.invoiceType " +
+            "AS loaiDon, pm.name AS hinhThucThanhToan, coalesce(br.code, '') as maDoiTra " +
+            "FROM Bill b " +
+            "LEFT JOIN Customer a ON b.customer.id = a.id " +
+            "LEFT JOIN BillDetail bd ON b.id = bd.bill.id " +
+            "LEFT JOIN PaymentMethod pm ON b.paymentMethod.id = pm.id left join BillReturn br on b.id = br.bill.id " +
+            "WHERE (:maDinhDanh IS NULL OR b.code LIKE CONCAT('%', :maDinhDanh, '%')) " +
+            "AND (:ngayTaoStart IS NULL OR :ngayTaoEnd IS NULL OR (b.createDate BETWEEN :ngayTaoStart AND :ngayTaoEnd)) " +
+            "AND (:trangThai IS NULL OR b.status = :trangThai) " +
+            "AND (:loaiDon IS NULL OR b.invoiceType= :loaiDon) "+
+            "AND (:soDienThoai IS NULL OR a.phoneNumber IS NULL OR a.phoneNumber LIKE CONCAT('%', :soDienThoai, '%')) "+
+            "AND (:hoVaTen IS NULL OR a.name IS NULL OR a.name LIKE CONCAT('%', :hoVaTen, '%'))")
+    List<BillDtoInterface> listSearchBill( @Param("maDinhDanh") String maDinhDanh,
+                                           @Param("ngayTaoStart") LocalDateTime ngayTaoStart,
+                                           @Param("ngayTaoEnd") LocalDateTime ngayTaoEnd,
+                                           @Param("trangThai") BillStatus trangThai,
+                                           @Param("loaiDon") InvoiceType loaiDon,
+                                           @Param("soDienThoai") String soDienThoai,
+                                           @Param("hoVaTen") String hoVaTen);
 }

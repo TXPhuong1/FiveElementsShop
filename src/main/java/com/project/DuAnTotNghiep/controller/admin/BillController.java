@@ -152,15 +152,17 @@ public class BillController {
     public void exportBill(
             HttpServletResponse response,
             @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "sort", defaultValue = "id,asc") String sortField,
-            @RequestParam(name = "ngayTaoStart", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDateTime ngayTaoStart,
-            @RequestParam(name = "ngayTaoEnd", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDateTime ngayTaoEnd,
+            @RequestParam(name = "sort", defaultValue = "createDate,desc") String sortField,
+            @RequestParam(name = "ngayTaoStart", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date ngayTaoStart,
+            @RequestParam(name  = "ngayTaoEnd", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date ngayTaoEnd,
             UriComponentsBuilder uriBuilder
     ) throws IOException {
-        int pageSize = 5;
+        int pageSize = 10;
         String[] sortParams = sortField.split(",");
         String sortFieldName = sortParams[0];
         Sort.Direction sortDirection = Sort.Direction.ASC;
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         if (sortParams.length > 1 && sortParams[1].equalsIgnoreCase("desc")) {
             sortDirection = Sort.Direction.DESC;
@@ -168,14 +170,11 @@ public class BillController {
 
         Sort sort = Sort.by(sortDirection, sortFieldName);
 
+
         Pageable pageable = PageRequest.of(page, pageSize, sort);
         Page<BillDtoInterface> bills;
+        bills = billService.findAll(pageable);
 
-        if (ngayTaoStart != null && ngayTaoEnd != null) {
-            bills = billService.searchListBill(null, ngayTaoStart, ngayTaoEnd, null, null, null, null, pageable);
-        } else {
-            bills = billService.findAll(pageable);
-        }
 
         String exportUrl = uriBuilder.path("/export-bill")
                 .queryParam("page", page)

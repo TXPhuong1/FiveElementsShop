@@ -21,7 +21,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" style="overflow-y:auto; max-height: 400px ">
                     <th:block th:each="voucher : ${discountCodes}">
                         <div th:data-voucher-id="${voucher.id}"  class="d-flex border border-primary rounded align-items-center cursor-pointer voucher-item mb-2">
                             <div class="col-sm-3 d-flex justify-content-center align-items-center " style="background-color: rgb(219 234 254); height: 80px">
