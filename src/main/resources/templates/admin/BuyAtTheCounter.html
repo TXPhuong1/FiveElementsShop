@@ -10,7 +10,7 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <!--    <script th:src="@{/js/sweetalert.min.js}"></script>-->
+<!--    <script th:src="@{/js/sweetalert.min.js}"></script>-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.3.1/dist/jsQR.js"></script>
 
@@ -157,14 +157,14 @@
     <video id="qr-video" width="300" height="200" autoplay class="mb-4"></video>
     <canvas id="qr-canvas" width="300" height="200" style="display: none"></canvas>
     <button type="button" class="close-modal-scan absolute top-1 right-1 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-            data-modal-hide="crypto-modal">
-        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-             fill="none" viewBox="0 0 14 14">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                  stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-        </svg>
-        <span class="sr-only">Close modal</span>
-    </button>
+                                        data-modal-hide="crypto-modal">
+                                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                         fill="none" viewBox="0 0 14 14">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                              stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                    </svg>
+                                    <span class="sr-only">Close modal</span>
+                                </button>
 </div>
 
 <div class="qr-payment-container z-10 bg-white p-x-20 pt-20 pb-10 rounded-lg shadow-md absolute left-1/4 top-1/4 -translate-y-1/4 hidden">
@@ -401,7 +401,7 @@
                 <div class="col">
                     <h5>Voucher: </h5>
                 </div>
-                <div class="col voucher-container">
+                <div class="col">
                     <h6 class="text-red-500 cursor-pointer voucher-choose-btn" >Click vào để chọn</h6>
                     <div class="selected-voucher active"></div>
                 </div>
@@ -435,7 +435,7 @@
                                 <div class="flex items-center justify-center rounded w-14 bg-blue-100 h-20 mr-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12.79 21L3 11.21v2c0 .53.21 1.04.59 1.41l7.79 7.79c.78.78 2.05.78 2.83 0l6.21-6.21c.78-.78.78-2.05 0-2.83L12.79 21z"/><path fill="currentColor" d="M11.38 17.41c.78.78 2.05.78 2.83 0l6.21-6.21c.78-.78.78-2.05 0-2.83L12.63.58A2.04 2.04 0 0 0 11.21 0H5C3.9 0 3 .9 3 2v6.21c0 .53.21 1.04.59 1.41l7.79 7.79zM7.25 3a1.25 1.25 0 1 1 0 2.5a1.25 1.25 0 0 1 0-2.5z"/></svg>
                                 </div>
-                                <!--                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M20.04 8.71V4h-4.7L12 .69L8.71 4H4v4.71L.69 12L4 15.34v4.7h4.71L12 23.35l3.34-3.31h4.7v-4.7L23.35 12l-3.31-3.29M8.83 7.05c.98 0 1.77.79 1.77 1.78a1.77 1.77 0 0 1-1.77 1.77c-.99 0-1.78-.79-1.78-1.77c0-.99.79-1.78 1.78-1.78M15.22 17c-.98 0-1.77-.8-1.77-1.78a1.77 1.77 0 0 1 1.77-1.77c.98 0 1.78.79 1.78 1.77A1.78 1.78 0 0 1 15.22 17m-6.72.03L7 15.53L15.53 7l1.5 1.5l-8.53 8.53Z"/></svg>-->
+<!--                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M20.04 8.71V4h-4.7L12 .69L8.71 4H4v4.71L.69 12L4 15.34v4.7h4.71L12 23.35l3.34-3.31h4.7v-4.7L23.35 12l-3.31-3.29M8.83 7.05c.98 0 1.77.79 1.77 1.78a1.77 1.77 0 0 1-1.77 1.77c-.99 0-1.78-.79-1.78-1.77c0-.99.79-1.78 1.78-1.78M15.22 17c-.98 0-1.77-.8-1.77-1.78a1.77 1.77 0 0 1 1.77-1.77c.98 0 1.78.79 1.78 1.77A1.78 1.78 0 0 1 15.22 17m-6.72.03L7 15.53L15.53 7l1.5 1.5l-8.53 8.53Z"/></svg>-->
 
                                 <div class="w-full">
                                     <p class="font-bold">Giảm <span>10K</span></p>
@@ -547,7 +547,6 @@
 
             $(document).ready(() => {
                 let voucherChoosed;
-                let voucherList
                 var maxQuantiyAllow=99999999;
                 let tabQuantity = 1;
                 var currentUserRole = /*[[${#authentication.getPrincipal().getAuthorities()}]]*/ [];
@@ -566,23 +565,12 @@
                     $('.product-select-body').removeClass('active')
                     $('.selected-customer').addClass('hidden');
                     $('.selected-customer').removeClass('active')
-
-                    $('.selected-voucher').addClass('hidden');
-                    $('.selected-voucher').removeClass('active')
-
                     document.querySelector('.product-select-body').classList.remove('hidden')
                     document.querySelector('.product-select-body').classList.add('active')
                     document.querySelector('.selected-customer').classList.remove('hidden')
                     document.querySelector('.selected-customer').classList.add('active')
-
-                    document.querySelector('.selected-voucher').classList.remove('hidden')
-                    document.querySelector('.selected-voucher').classList.add('active')
-
                     calculateAllPrice()
-
-                    const voucherId =  document.querySelector('.selected-voucher').getAttribute('selected-id')
-                    voucherChoosed = voucherList.find(item => item.id == voucherId)
-
+                    voucherChoosed = null
                     $('#customerPayInput').val('')
                     pay.customerPay = 0
                     $('#money-change').text(0)
@@ -627,12 +615,7 @@
                     var selectedCustomer = $(`<div class="selected-customer mt-2 border border-blue-400 rounded-md hidden">
 <span class="font-bold italic text-gray-500">--Khách lẻ--</span>
 </div>`)
-                    var selectedVoucher = $(`<div class="selected-voucher">
-                                    </div>`)
-
                     $('.search-customer-container').append(selectedCustomer)
-
-                    $('.voucher-container').append(selectedVoucher)
                     // Bắt sự kiện click trên tab mới
                     newTab.on('click', function () {
                         $('.tab-container .tab').removeClass('active');
@@ -640,24 +623,14 @@
                         $('.product-select-body').removeClass('active')
                         $('.selected-customer').addClass('hidden');
                         $('.selected-customer').removeClass('active')
-
-                        $('.selected-voucher').addClass('hidden');
-                        $('.selected-voucher').removeClass('active')
-
                         body.addClass('active')
                         body.removeClass('hidden')
                         newTab.addClass('active');
-
                         selectedCustomer.addClass('active')
                         selectedCustomer.removeClass('hidden')
-                        selectedVoucher.addClass('active')
-                        selectedVoucher.removeClass('hidden')
 
                         calculateAllPrice()
-
-                        const voucherId = selectedVoucher.attr('selected-id')
-                        voucherChoosed = voucherList.find(item => item.id == voucherId)
-
+                        voucherChoosed = null
                         $('#customerPayInput').val('')
                         pay.customerPay = 0
                         $('#money-change').text(0)
@@ -1049,9 +1022,6 @@
                     $("#customerPayInput").val(0)
                     $("#money-change").text(0)
                     $("#search-product").val('')
-                    $('.selected-voucher.active').html('')
-                    $('.selected-voucher.active').attr('selected-id', '')
-                    voucherChoosed=null
                 }
 
                 function calculateAllPrice() {
@@ -1089,8 +1059,6 @@
                         }
                     }else {
                         voucherDiscount.innerText = '0'
-                        // $('.selected-voucher.active').html('')
-                        // $('.selected-voucher.active').attr('selected-id', '')
                         calculateLastPrice()
                     }
                 }
@@ -1215,11 +1183,11 @@
                                     ${customerPhone}
                                 </span>
                             </div>
-                              <span class="delete-selected-customer-btn p-1 hover:bg-gray-400 rounded-full font-bold cursor-pointer">&times</span>
+                              <span id="delete-selected-customer-btn" class="p-1 hover:bg-gray-400 rounded-full font-bold cursor-pointer">&times</span>
                         </div>
                         `)
 
-                    $('.delete-selected-customer-btn').click(() => {
+                    $('#delete-selected-customer-btn').click(() => {
                         $('.selected-customer.active').html('<span class="font-bold italic text-gray-500">--Khách lẻ--</span>')
                         $('.selected-customer.active').attr('selected-id', "")
                     })
@@ -1351,7 +1319,7 @@
                         url: `/api/private/discount-code-valid?sort=start_date,desc`,
                         dataType: 'json',
                         success: function (data) {
-                            voucherList = data.content;
+                            const voucherList = data.content;
                             loadHtmlVoucherSelectList(voucherList);
                             $('#loading-overlay').hide();
                             $('#overlay').show()
@@ -1477,9 +1445,12 @@
                         $('.selected-voucher.active').attr('selected-id', voucherId)
                         $('.selected-voucher.active').html(html)
 
+                        $('#overlay').hide()
+                        $('#voucher-modal').addClass('hidden')
 
                         calculateAllPrice()
                         calculateLastPrice()
+                        closeModalVoucher()
 
                         // Click xóa voucher
                         $('.close-voucher-btn').on('click', function () {
@@ -1501,6 +1472,7 @@
                 //===========================================ẤN NÚT THANH TOÁN=====================
                 $('#submitBtn').on('click', handleSubmit);
 
+                var dataSendIfChuyenKhoan
                 async function handleSubmit() {
                     const customerId = $(".selected-customer.active").attr("selected-id") || ""
                     const voucherId = $(".selected-voucher.active").attr("selected-id") || ""
@@ -1545,76 +1517,77 @@
                         orderDetailDtos: orderDetails
                     };
 
-                    async function handleAjaxRequest() {
-                        //============================================== XỬ LÝ THANH TOÁN =============================================
-                        $('#loading-overlay').show();
-                        await $.ajax({
-                            type: 'POST',
-
-                            url: '/api/orderAdmin',
-                            data: JSON.stringify(dataSend),
-                            contentType: "application/json; charset=utf-8",
-                            success: async function (data) {
-                                $('#loading-overlay').hide();
-                                $(".product-select-body.active").html('')
-                                resetPayArea()
-                                Toastify({
-                                    text: "Thanh toán thành công",
-                                    className: "info",
-                                    style: {
-                                        background: "linear-gradient(to right, #00b09b, #96c93d)",
-                                    }
-                                }).showToast();
-
-                                //Lấy bill vừa lưu
-                                var generateUrl = `/admin/generate-pdf/${data.billId}`;
-                                // Fetch the HTML content from the controller
-                                await fetch(generateUrl)
-                                    .then(response => response.text())
-                                    .then(htmlContent => {
-
-                                        // Config máy in
-                                        var printWindow = window.open('', '', 'width=800,height=1000');
-                                        printWindow.document.open();
-
-                                        printWindow.document.write(htmlContent);
-                                        printWindow.document.close();
-                                        printWindow.print();
-
-                                    })
-                                    .catch(error => {
-                                        $('#loading-overlay').hide();
-                                        Swal.fire({
-                                            title: "Lỗi",
-                                            text: "Lỗi export pdf phía server",
-                                            icon: "error"
-                                        });
-                                    });
-                            },
-                            error: function (xhr, status, error) {
-                                $('#loading-overlay').hide();
-                                Swal.fire({
-                                    title: "Lỗi",
-                                    text: xhr.responseJSON.message,
-                                    icon: "error"
-                                });
-                            }
-                        })
-                    }
-
                     // Xử lý khi pt thanh toán là chuyển khoản
                     if (paymentMethodId == 3) {
                         $(".qr-payment-container").removeClass('hidden');
                         $(".qr-payment-container").find('img').attr("src", `https://img.vietqr.io/image/TCB-19037422831012-compact2.jpg?amount=${pay.requireMoney}&addInfo=Thanh%20%20toan%20don%20hang&accountName=Nguyen%20Ngoc%20Sang`);
-
-                        $("#confirm-pay").click(function () {
-                            handleAjaxRequest();
-                        });
+                        dataSendIfChuyenKhoan = dataSend;
                     } else {
                         // Execute the AJAX request directly for other payment methods
-                        await handleAjaxRequest();
+                        await handleAjaxRequest(dataSend);
                     }
                 }
+
+                // Gọi thanh toán
+                async function handleAjaxRequest(dataSend) {
+                    //============================================== XỬ LÝ THANH TOÁN =============================================
+                    $('#loading-overlay').show();
+                    await $.ajax({
+                        type: 'POST',
+                        url: '/api/orderAdmin',
+                        data: JSON.stringify(dataSend),
+                        contentType: "application/json; charset=utf-8",
+                        success: async function (data) {
+                            $('#loading-overlay').hide();
+                            $(".product-select-body.active").html('')
+                            resetPayArea()
+                            Toastify({
+                                text: "Thanh toán thành công",
+                                className: "info",
+                                style: {
+                                    background: "linear-gradient(to right, #00b09b, #96c93d)",
+                                }
+                            }).showToast();
+
+                            //Lấy bill vừa lưu
+                            var generateUrl = `/admin/generate-pdf/${data.billId}`;
+                            // Fetch the HTML content from the controller
+                            await fetch(generateUrl)
+                                .then(response => response.text())
+                                .then(htmlContent => {
+
+                                    // Config máy in
+                                    var printWindow = window.open('', '', 'width=800,height=1000');
+                                    printWindow.document.open();
+
+                                    printWindow.document.write(htmlContent);
+                                    printWindow.document.close();
+                                    printWindow.print();
+
+                                })
+                                .catch(error => {
+                                    $('#loading-overlay').hide();
+                                    Swal.fire({
+                                        title: "Lỗi",
+                                        text: "Lỗi export pdf phía server",
+                                        icon: "error"
+                                    });
+                                });
+                        },
+                        error: function (xhr, status, error) {
+                            $('#loading-overlay').hide();
+                            Swal.fire({
+                                title: "Lỗi",
+                                text: xhr.responseJSON.message,
+                                icon: "error"
+                            });
+                        }
+                    })
+                }
+
+                $("#confirm-pay").click(function () {
+                    handleAjaxRequest(dataSendIfChuyenKhoan);
+                });
 
                 // Xử lý click nút close modal khi chuyển khoản
                 $(".close-modal-payment").click(function () {
@@ -1622,13 +1595,10 @@
 
                 })
 
-
                 // Format dạng 1.000
                 function formatNumber(number) {
                     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                 }
-
-
 
 //-------------------------- ========XỬ LÝ QUÉT MÃ========== ================================-----------------------------------------------------
                 var video = document.getElementById("qr-video");
