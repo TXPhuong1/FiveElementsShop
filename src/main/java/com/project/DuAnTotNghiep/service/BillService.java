@@ -15,6 +15,7 @@ import java.util.List;
 public interface BillService {
 
     Page<BillDtoInterface> findAll(Pageable pageable);
+    List<BillDtoInterface> findAll();
 
 //    public Page<BillDtoInterface> searchListBill(String maDinhDanh,
 //                                                 Date ngayTaoStart,
@@ -33,6 +34,13 @@ public interface BillService {
                                           String soDienThoai,
                                           String hoVaTen,
                                           Pageable pageable);
+    List<BillDtoInterface> searchListBill(String maDinhDanh,
+                                          LocalDateTime ngayTaoStart,
+                                          LocalDateTime ngayTaoEnd,
+                                          String trangThai,
+                                          String loaiDon,
+                                          String soDienThoai,
+                                          String hoVaTen);
 
     Bill updateStatus(String status, Long id);
 

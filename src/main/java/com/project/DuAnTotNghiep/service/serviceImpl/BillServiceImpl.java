@@ -30,8 +30,10 @@ import javax.swing.text.DateFormatter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -50,6 +52,11 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
+    public List<BillDtoInterface> findAll() {
+        return billRepository.listBill();
+    }
+
+    @Override
     public Page<BillDtoInterface> searchListBill(String maDinhDanh,
                                                  LocalDateTime ngayTaoStart,
                                                  LocalDateTime ngayTaoEnd,
@@ -64,8 +71,7 @@ public class BillServiceImpl implements BillService {
         try {
             status = BillStatus.valueOf(trangThai);
         } catch (IllegalArgumentException e) {
-            // Handle the case where the input string does not match any enum constant
-            // You can log an error, return a default value, or perform other error handling here.
+
         }
         try {
             invoiceType = InvoiceType.valueOf(loaiDon);
@@ -80,6 +86,30 @@ public class BillServiceImpl implements BillService {
                  soDienThoai,
                  hoVaTen,
                 pageable);
+    }
+
+    @Override
+    public List<BillDtoInterface> searchListBill(String maDinhDanh, LocalDateTime ngayTaoStart, LocalDateTime ngayTaoEnd, String trangThai, String loaiDon, String soDienThoai, String hoVaTen) {
+        BillStatus status = null;
+        InvoiceType invoiceType = null;
+
+        try {
+            status = BillStatus.valueOf(trangThai);
+        } catch (IllegalArgumentException e) {
+
+        }
+        try {
+            invoiceType = InvoiceType.valueOf(loaiDon);
+        } catch (IllegalArgumentException e) {
+
+        }
+        return billRepository.listSearchBill( maDinhDanh,
+                ngayTaoStart,
+                ngayTaoEnd,
+                status,
+                invoiceType,
+                soDienThoai,
+                hoVaTen);
     }
 
     @Override
@@ -132,7 +162,13 @@ public class BillServiceImpl implements BillService {
 
         // Tạo workbook Excel và các sheet, row, cell tương ứng
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("Bills");
+
+        // Get the current date in the "dd-MM-yyyy" format
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        String currentDate = dateFormat.format(new Date());
+
+        // Create a sheet with the name "bill_dd-mm-yyyy"
+        XSSFSheet sheet = workbook.createSheet("bill_" + currentDate);
 
         // Tạo tiêu đề cột
         XSSFRow headerRow = sheet.createRow(0);
@@ -148,7 +184,7 @@ public class BillServiceImpl implements BillService {
         int rowNum = 1;
         for (BillDtoInterface bill : bills) {
             XSSFRow row = sheet.createRow(rowNum++);
-            row.createCell(0).setCellValue(bill.getMaHoaDon());
+            row.createCell(0).setCellValue(bill.getMaDinhDanh());
             row.createCell(1).setCellValue(bill.getHoVaTen());
             row.createCell(2).setCellValue(bill.getSoDienThoai());
             XSSFCell dateCell = row.createCell(3);

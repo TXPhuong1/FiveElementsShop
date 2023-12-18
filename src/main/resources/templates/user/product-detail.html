@@ -116,8 +116,9 @@
                         <span class="mtext-106 cl2" id="price_product" th:text="${#numbers.formatDecimal(product.productDetails[0].price, 0, 'POINT', 0, 'COMMA') + ' đ'}">
 
 						</span>
+						</span>
 
-                        <p class="stext-102 cl3 p-t-23">
+                        <p class="stext-102 cl3 p-t-23" th:text="${product.describe}">
                             Một kết hợp từ sự thoải mái cùng độ ấm áp trong thiết kế cổ lọ.
                         </p>
 
