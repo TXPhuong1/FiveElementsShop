@@ -41,6 +41,10 @@ public class CustomerServiceImpl implements CustomerService {
             }
 
         }
+        if(customerRepository.existsByPhoneNumber(customerDto.getPhoneNumber())) {
+            throw new ShopApiException(HttpStatus.BAD_REQUEST, "Số điện thoại khách hàng đã tồn tại");
+
+        }
         Customer customer = convertToEntity(customerDto);
         return convertToDto(customerRepository.save(customer));
     }
